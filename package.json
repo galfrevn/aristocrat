@@ -5,6 +5,7 @@
 		"apps/*",
 		"packages/*"
 	],
+	"license": "MIT",
 	"scripts": {
 		"check": "biome check --write .",
 		"prepare": "husky",
