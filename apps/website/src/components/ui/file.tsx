@@ -3,7 +3,6 @@
 import { RiUser2Line } from '@remixicon/react';
 
 import { useFileUpload } from '@/hooks/use-file-upload';
-import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 
 import { genUploader } from 'uploadthing/client';
@@ -26,7 +25,7 @@ export function FileUploader({ onChange, preview }: FileUploaderProps) {
 
 	useEffect(() => {
 		if (files.length > 0) {
-			onChange(files[0].file);
+			onChange(files[0].file as File);
 		} else {
 			onChange(null);
 		}
