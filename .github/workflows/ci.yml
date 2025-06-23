@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Turbo
+  # Turbo (optional - for remote caching)
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
   
@@ -180,9 +180,23 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run database migrations
-        run: bun run db:push --filter=@aristocrat/server
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aristocrat_test
+        run: |
+          echo "🗄️ Testing database connection..."
+          cd apps/server
+          
+          # Test connection first
+          bun run --eval "
+          import pg from 'pg';
+          const client = new pg.Client('postgresql://postgres:postgres@localhost:5432/aristocrat_test');
+          await client.connect();
+          console.log('✅ Database connection successful');
+          await client.end();
+          "
+          
+          echo "🗄️ Running database migrations..."
+          bun run db:push
 
       - name: Verify database schema
         run: |

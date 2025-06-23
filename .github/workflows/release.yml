@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false  # Don't cancel release builds
 
 env:
-  # Turbo
+  # Turbo (optional - for remote caching)
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
   
