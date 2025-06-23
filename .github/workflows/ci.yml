@@ -278,18 +278,53 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Get actual bundle sizes
+            let websiteSize = 'N/A';
+            let serverSize = 'N/A';
+            
+            try {
+              // Check website bundle
+              const websiteStaticPath = 'apps/website/.next/static';
+              if (fs.existsSync(websiteStaticPath)) {
+                const { execSync } = require('child_process');
+                websiteSize = execSync(`du -sh ${websiteStaticPath}`, { encoding: 'utf8' }).split('\t')[0];
+              }
+            } catch (error) {
+              console.log('Could not get website size:', error.message);
+            }
+            
+            try {
+              // Check server bundle
+              const serverDistPath = 'apps/server/dist';
+              if (fs.existsSync(serverDistPath)) {
+                const { execSync } = require('child_process');
+                serverSize = execSync(`du -sh ${serverDistPath}`, { encoding: 'utf8' }).split('\t')[0];
+              }
+            } catch (error) {
+              console.log('Could not get server size:', error.message);
+            }
+            
             const comment = `## 📊 Bundle Analysis
             
-            Build completed successfully! 
+            Build completed successfully! 🎉
             
+            ### Bundle Sizes
+            - 🌐 **Website Static**: ${websiteSize}
+            - 🗄️ **Server Bundle**: ${serverSize}
+            
+            ### CI Status
             - ✅ Type checking passed
             - ✅ All applications built successfully
             - ✅ Database tests passed
             
-            View the full CI report above for detailed information.`
+            View the full CI report above for detailed information.`;
             
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
