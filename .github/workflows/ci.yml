@@ -237,41 +237,6 @@ jobs:
           # Add custom security checks here if needed
           echo "✅ Security audit completed"
 
-    name: Build Validation
-    runs-on: ubuntu-latest
-    needs: [type-check, build, database-tests]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: build-*
-          merge-multiple: true
-
-      - name: Validate build outputs
-        run: |
-          echo "🔍 Validating build artifacts..."
-          
-          # Check server build
-          if [ -d "apps/server/dist" ]; then
-            echo "✅ Server build found"
-            ls -la apps/server/dist/
-          else
-            echo "❌ Server build missing"
-            exit 1
-          fi
-          
-          # Check website build
-          if [ -d "apps/website/.next" ]; then
-            echo "✅ Website build found"
-            ls -la apps/website/.next/
-          else
-            echo "❌ Website build missing"
-            exit 1
-          fi
-
   # Job 7: Performance benchmarks
   performance:
     name: Performance Benchmarks
@@ -342,7 +307,8 @@ jobs:
         run: |
           if [[ "${{ needs.type-check.result }}" != "success" ]] || \
              [[ "${{ needs.build.result }}" != "success" ]] || \
-             [[ "${{ needs.database-tests.result }}" != "success" ]]; then
+             [[ "${{ needs.database-tests.result }}" != "success" ]] || \
+             [[ "${{ needs.security-audit.result }}" != "success" ]]; then
             echo "❌ CI failed - check the logs above"
             exit 1
           else
