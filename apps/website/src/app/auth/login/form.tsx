@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { authenticationClientside } from '@/lib/auth-client';
 import { toast } from 'sonner';
 
+import { PasswordInput } from '@/components/ui/password';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -90,10 +91,9 @@ export function AuthenticationLoginForm() {
 						{(field) => (
 							<div className="space-y-2">
 								<Label htmlFor={field.name}>Contraseña</Label>
-								<Input
+								<PasswordInput
 									id={field.name}
 									name={field.name}
-									type="password"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
