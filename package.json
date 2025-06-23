@@ -34,7 +34,7 @@
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-			"biome check --write ."
+			"biome check --write $1"
 		]
 	},
 	"packageManager": "bun@1.2.15"
