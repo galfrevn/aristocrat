@@ -10,6 +10,8 @@ import {
 	RiRobot2Line,
 	RiSettings3Line,
 	RiUser2Line,
+	RiEyeLine,
+	RiEyeCloseLine,
 } from '@remixicon/react';
 
 export const AristocratIcons = {
@@ -23,5 +25,7 @@ export const AristocratIcons = {
 	Settings: RiSettings3Line,
 	Profile: RiUser2Line,
 	Logout: RiLogoutBoxLine,
-	Stars: RiBardLine
+	Stars: RiBardLine,
+	Eye: RiEyeLine,
+	EyeClose: RiEyeCloseLine,
 };
