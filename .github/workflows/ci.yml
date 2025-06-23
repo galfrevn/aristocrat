@@ -186,15 +186,6 @@ jobs:
           echo "🗄️ Testing database connection..."
           cd apps/server
           
-          # Test connection first
-          bun run --eval "
-          import pg from 'pg';
-          const client = new pg.Client('postgresql://postgres:postgres@localhost:5432/aristocrat_test');
-          await client.connect();
-          console.log('✅ Database connection successful');
-          await client.end();
-          "
-          
           echo "🗄️ Running database migrations..."
           bun run db:push
 
