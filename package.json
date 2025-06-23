@@ -8,7 +8,8 @@
 	"scripts": {
 		"check": "biome check --write .",
 		"prepare": "husky",
-		"dev": "turbo dev",
+		"dev": "bun scripts/dev.ts",
+		"dev:turbo": "turbo dev",
 		"build": "turbo build",
 		"check-types": "turbo check-types",
 		"dev:native": "turbo -F native dev",
@@ -21,10 +22,12 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"turbo": "^2.5.4",
 		"@biomejs/biome": "^2.0.0",
+		"chalk": "^5.4.1",
 		"husky": "^9.1.7",
-		"lint-staged": "^15.5.0"
+		"lint-staged": "^15.5.0",
+		"ora": "^8.2.0",
+		"turbo": "^2.5.4"
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
