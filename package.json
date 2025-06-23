@@ -13,11 +13,11 @@
 		"check-types": "turbo check-types",
 		"dev:native": "turbo -F native dev",
 		"dev:web": "turbo -F web dev",
-		"dev:server": "turbo -F server dev",
-		"db:push": "turbo -F server db:push",
-		"db:studio": "turbo -F server db:studio",
-		"db:generate": "turbo -F server db:generate",
-		"db:migrate": "turbo -F server db:migrate"
+		"dev:server": "turbo -F @aristocrat/server dev",
+		"db:push": "turbo -F @aristocrat/server db:push",
+		"db:studio": "turbo -F @aristocrat/server db:studio",
+		"db:generate": "turbo -F @aristocrat/server db:generate",
+		"db:migrate": "turbo -F @aristocrat/server db:migrate"
 	},
 	"dependencies": {},
 	"devDependencies": {

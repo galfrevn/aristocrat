@@ -1,6 +1,6 @@
 import {
 	Geist_Mono as FontMono,
-	Geist as FontSans,
+	DM_Sans as FontSans,
 	Lora as FontSerif,
 } from 'next/font/google';
 

@@ -1,6 +1,7 @@
-import type { NextFontWithVariable } from 'next/dist/compiled/@next/font';
 import { memo } from 'react';
+
 import type { Layout } from '@/types/layout';
+import type { NextFontWithVariable } from 'next/dist/compiled/@next/font';
 
 interface FontsProviderProps extends Layout {
 	fonts: {
@@ -18,7 +19,7 @@ export const FontsProvider = memo((props: FontsProviderProps) => {
 		<body
 			className={`${mono.variable} ${sans.variable} ${serif.variable} antialiased`}
 		>
-			{children}
+			<div className="font-sans">{children}</div>
 		</body>
 	);
 });
