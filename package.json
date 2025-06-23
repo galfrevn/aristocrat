@@ -1,36 +1,41 @@
 {
-  "name": "aristocrat",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "check": "biome check --write .",
-    "dev": "turbo dev",
-    "dev:franco": "concurrently \"npm --prefix apps/website run dev\" \"npm --prefix apps/server run dev\"",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F server dev",
-    "db:push": "turbo -F server db:push",
-    "db:studio": "turbo -F server db:studio",
-    "db:generate": "turbo -F server db:generate",
-    "db:migrate": "turbo -F server db:migrate"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "concurrently": "^9.2.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
-    "turbo": "^2.5.4"
-  },
-  "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-      "biome check --write ."
-    ]
-  },
-  "packageManager": "bun@1.2.15"
+	"name": "aristocrat",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"license": "MIT",
+	"scripts": {
+		"check": "biome check --write .",
+		"prepare": "husky",
+		"dev": "bun scripts/dev.ts",
+		"dev:turbo": "turbo dev",
+		"build": "turbo build",
+		"check-types": "turbo check-types",
+		"dev:native": "turbo -F native dev",
+		"dev:web": "turbo -F web dev",
+		"dev:server": "turbo -F @aristocrat/server dev",
+		"db:push": "turbo -F @aristocrat/server db:push",
+		"db:studio": "turbo -F @aristocrat/server db:studio",
+		"db:generate": "turbo -F @aristocrat/server db:generate",
+		"db:migrate": "turbo -F @aristocrat/server db:migrate"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@biomejs/biome": "^2.0.0",
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
+		"chalk": "^5.4.1",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.5.0",
+		"ora": "^8.2.0",
+		"turbo": "^2.5.4"
+	},
+	"lint-staged": {
+		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+			"biome check --write $1"
+		]
+	},
+	"packageManager": "bun@1.2.15"
 }

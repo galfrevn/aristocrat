@@ -1,1 +1,48 @@
-lint-staged
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+DIM='\033[2m'
+NC='\033[0m' # No Color
+
+clear
+
+echo ""
+echo "${BLUE} Aristocrat :: Running pre-commit hooks${NC}"
+echo ""
+
+# Check for staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -z "$STAGED_FILES" ]; then
+  echo "${YELLOW}→ No staged files found. Skipping pre-commit hooks.${NC}"
+  echo ""
+  exit 0
+fi
+
+echo "${BLUE}→${NC} Found staged files:"
+echo "$STAGED_FILES" | sed 's/^/  - /'
+echo ""
+
+# Run lint-staged
+echo "${BLUE}→${NC} Running lint-staged (formatting & linting)"
+if ! lint-staged; then
+  echo "${RED}→ Lint-staged failed. Please fix the issues and try again.${NC}"
+  echo ""
+  exit 1
+fi
+
+echo ""
+
+# Check for console.log/debugger statements
+echo "${BLUE}→${NC} Checking for debug statements"
+DEBUG_COUNT=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|ts|jsx|tsx)$' | xargs grep -l "console\.\|debugger" 2>/dev/null | wc -l)
+if [ "$DEBUG_COUNT" -gt 0 ]; then
+  echo "${YELLOW}→ Found debug statements in $DEBUG_COUNT file(s):${NC}"
+  git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|ts|jsx|tsx)$' | xargs grep -n "console\.\|debugger" 2>/dev/null || true
+  echo "${YELLOW}→ Consider removing debug statements before committing.${NC}"
+fi
+
+echo ""
+
+echo "${GREEN}✔ Pre-commit hooks completed successfully!${NC}"
