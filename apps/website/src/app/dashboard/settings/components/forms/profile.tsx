@@ -52,10 +52,10 @@ export function SettingsProfileForm() {
 			<CardContent className="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
 				<div>
 					<div className="space-y-2">
-						<Label htmlFor="email">Email</Label>
+						<Label htmlFor={emailId}>Email</Label>
 						<Input
 							disabled
-							id={useId()}
+							id={emailId}
 							name="email"
 							type="text"
 							className="mt-1 bg-secondary"
