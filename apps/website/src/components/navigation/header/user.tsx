@@ -21,7 +21,7 @@ export const AristocratNavigationHeaderUser = () => {
 	const { data, isPending } = authenticationClientside.useSession();
 
 	if (isPending) {
-		return <Skeleton className="size-8 rounded-full" />;
+		return <Skeleton className="size-8 rounded-lg" />;
 	}
 
 	return (

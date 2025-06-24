@@ -1,9 +1,12 @@
 import { AristocratPageHeader } from '@/app/dashboard/components/header';
 import { AristocratPageWrapper } from '@/app/dashboard/components/wrapper';
 
-import { AristocratDashboardSettingsSidebar } from './components/sidebar';
-import { AristocratDashboardSettingsCards } from './components/cards';
-import { SettingsProfileForm } from './components/form';
+import { AristocratDashboardSettingsSidebar } from '@/app/dashboard/settings/components/sidebar';
+import { AristocratDashboardSettingsCards } from '@/app/dashboard/settings/components/cards';
+
+import { SettingsProfileForm } from '@/app/dashboard/settings/components/forms/profile';
+import { SettingsPasswordForm } from '@/app/dashboard/settings/components/forms/password';
+import { SettingsAvatarForm } from '@/app/dashboard/settings/components/forms/avatar';
 
 const AristocratDashboardSettingsPage = () => (
 	<AristocratPageWrapper>
@@ -23,11 +26,21 @@ const AristocratDashboardSettingsPage = () => (
 							'Actualiza tu información personal y preferencias de cuenta.',
 					}}
 				/>
+
 				<AristocratDashboardSettingsCards
-					form={<></>}
+					form={<SettingsAvatarForm />}
+					content={{
+						title: 'Mi Avatar',
+						description: 'Personaliza tu imagen y deja una impresión única.',
+					}}
+				/>
+
+				<AristocratDashboardSettingsCards
+					form={<SettingsPasswordForm />}
 					content={{
 						title: 'Seguridad',
-						description: 'Actualiza tu contraseña y opciones de seguridad.',
+						description:
+							'Cambia tu contraseña y gestiona la seguridad de tu cuenta.',
 					}}
 				/>
 			</div>
