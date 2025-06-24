@@ -2,7 +2,6 @@
 
 import z from 'zod/v4';
 
-import { useId } from 'react';
 import { useForm } from '@tanstack/react-form';
 
 import { authenticationClientside } from '@/lib/auth-client';
@@ -52,10 +51,10 @@ export function SettingsProfileForm() {
 			<CardContent className="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
 				<div>
 					<div className="space-y-2">
-						<Label htmlFor={emailId}>Email</Label>
+						<Label htmlFor="email">Email</Label>
 						<Input
 							disabled
-							id={emailId}
+							id="email"
 							name="email"
 							type="text"
 							className="mt-1 bg-secondary"

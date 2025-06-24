@@ -33,6 +33,7 @@
 				"useExhaustiveDependencies": "info"
 			},
 			"nursery": {
+				"useUniqueElementIds": "off",
 				"useSortedClasses": {
 					"level": "warn",
 					"fix": "safe",
