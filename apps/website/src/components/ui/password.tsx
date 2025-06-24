@@ -31,7 +31,7 @@ function PasswordInput({ className, type, ...props }: ComponentProps<"input">) {
         className="absolute right-1 top-1 size-7"
         type="button"
       >
-        {isPasswordVisible ? <AristocratIcons.Eye /> : <AristocratIcons.EyeOff />}
+        {isPasswordVisible ? <AristocratIcons.Eye /> : <AristocratIcons.EyeClose />}
       </Button>
     </div>
   );

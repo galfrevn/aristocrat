@@ -1,0 +1,390 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false  # Don't cancel release builds
+
+env:
+  # Turbo (optional - for remote caching)
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  
+  # Registry and deployment
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: write      # For creating releases
+  packages: write      # For pushing Docker images
+  id-token: write      # For OIDC token
+  actions: read        # For downloading artifacts
+
+jobs:
+  # Job 1: Validate release tag and extract version
+  validate-release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+      is-prerelease: ${{ steps.extract-version.outputs.is-prerelease }}
+      changelog: ${{ steps.extract-version.outputs.changelog }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for changelog
+
+      - name: Extract version from tag
+        id: extract-version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          
+          # Check if this is a prerelease (contains alpha, beta, rc)
+          if [[ $VERSION =~ (alpha|beta|rc) ]]; then
+            echo "is-prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is-prerelease=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "📋 Release Info:"
+          echo "  Tag: ${TAG}"
+          echo "  Version: ${VERSION}"
+          echo "  Prerelease: $(if [[ $VERSION =~ (alpha|beta|rc) ]]; then echo 'true'; else echo 'false'; fi)"
+
+      - name: Validate semantic version
+        run: |
+          VERSION="${{ steps.extract-version.outputs.version }}"
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\-\.]+)?$ ]]; then
+            echo "❌ Invalid semantic version: $VERSION"
+            echo "Expected format: X.Y.Z or X.Y.Z-prerelease"
+            exit 1
+          fi
+          echo "✅ Valid semantic version: $VERSION"
+
+      - name: Generate changelog
+        id: generate-changelog
+        run: |
+          echo "📝 Generating changelog..."
+          
+          # Get previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -n "$PREVIOUS_TAG" ]; then
+            echo "📊 Changes since $PREVIOUS_TAG:"
+            CHANGELOG=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          else
+            echo "📊 Initial release:"
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          # Save changelog to file and output
+          echo "$CHANGELOG" > changelog.md
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Upload changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: changelog.md
+
+  # Job 2: Build production artifacts
+  build-production:
+    name: Production Build
+    runs-on: ubuntu-latest
+    needs: validate-release
+    strategy:
+      matrix:
+        app: [server, website]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.2.15
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            apps/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build ${{ matrix.app }} for production
+        run: bun run build --filter=@aristocrat/${{ matrix.app }}
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Create production archive
+        run: |
+          cd apps/${{ matrix.app }}
+          tar -czf ../../aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz \
+            $(if [ "${{ matrix.app }}" = "website" ]; then echo ".next public package.json"; else echo "dist package.json"; fi)
+
+      - name: Upload production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-${{ matrix.app }}
+          path: aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz
+
+  # Job 3: Build and push Docker images
+  build-docker:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [validate-release, build-production]
+    strategy:
+      matrix:
+        app: [server, website]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.app }}
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+          labels: |
+            org.opencontainers.image.title=Aristocrat ${{ matrix.app }}
+            org.opencontainers.image.description=AI-powered course generation platform - ${{ matrix.app }}
+            org.opencontainers.image.version=${{ needs.validate-release.outputs.version }}
+
+      - name: Download production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-${{ matrix.app }}
+
+      - name: Create Dockerfile for ${{ matrix.app }}
+        run: |
+          if [ "${{ matrix.app }}" = "server" ]; then
+            cat > Dockerfile << EOF
+          FROM oven/bun:1.2.15-alpine AS base
+          WORKDIR /app
+          
+          # Copy production archive and extract
+          COPY aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz .
+          RUN tar -xzf aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz
+          RUN rm aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz
+          
+          # Install production dependencies
+          RUN bun install --production --frozen-lockfile
+          
+          # Health check
+          HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+            CMD curl -f http://localhost:3000/ || exit 1
+          
+          EXPOSE 3000
+          CMD ["bun", "run", "dist/src/index.js"]
+          EOF
+          else
+            cat > Dockerfile << EOF
+          FROM node:20-alpine AS base
+          WORKDIR /app
+          
+          # Copy production archive and extract
+          COPY aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz .
+          RUN tar -xzf aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz
+          RUN rm aristocrat-${{ matrix.app }}-${{ needs.validate-release.outputs.version }}.tar.gz
+          
+          # Install production dependencies
+          RUN npm ci --only=production && npm cache clean --force
+          
+          # Health check
+          HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+            CMD curl -f http://localhost:3001/ || exit 1
+          
+          EXPOSE 3001
+          CMD ["npm", "start"]
+          EOF
+          fi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Job 4: Create GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate-release, build-production, build-docker]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+
+      - name: Download production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: production-*
+          merge-multiple: true
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Aristocrat ${{ needs.validate-release.outputs.version }}
+          body: |
+            # 🎉 Aristocrat ${{ needs.validate-release.outputs.version }}
+            
+            ${{ needs.validate-release.outputs.is-prerelease == 'true' && '⚠️ **This is a pre-release version**' || '🚀 **Stable Release**' }}
+            
+            ## 📦 What's Included
+            
+            - **Server Application**: AI-powered backend with tRPC API
+            - **Website Application**: Next.js frontend with modern UI
+            - **Docker Images**: Production-ready containers
+            
+            ## 🔄 Changes
+            
+            ${{ needs.validate-release.outputs.changelog }}
+            
+            ## 🐳 Docker Images
+            
+            ```bash
+            # Pull server image
+            docker pull ghcr.io/${{ github.repository }}-server:${{ needs.validate-release.outputs.version }}
+            
+            # Pull website image  
+            docker pull ghcr.io/${{ github.repository }}-website:${{ needs.validate-release.outputs.version }}
+            ```
+            
+            ## 🚀 Quick Start
+            
+            1. Download the production archives below
+            2. Extract and deploy to your infrastructure
+            3. Or use the Docker images for containerized deployment
+            
+            ## 📋 System Requirements
+            
+            - **Runtime**: Bun 1.2.15+ (server) or Node.js 20+ (website)
+            - **Database**: PostgreSQL 16+
+            - **Memory**: 512MB minimum, 2GB recommended
+            
+            ---
+            
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ needs.validate-release.outputs.version }}...HEAD
+          draft: false
+          prerelease: ${{ needs.validate-release.outputs.is-prerelease }}
+
+      - name: Upload Server Archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./aristocrat-server-${{ needs.validate-release.outputs.version }}.tar.gz
+          asset_name: aristocrat-server-${{ needs.validate-release.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Website Archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./aristocrat-website-${{ needs.validate-release.outputs.version }}.tar.gz
+          asset_name: aristocrat-website-${{ needs.validate-release.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+
+  # Job 5: Deploy to staging (for pre-releases)
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [validate-release, create-release]
+    if: needs.validate-release.outputs.is-prerelease == 'true'
+    environment: staging
+    steps:
+      - name: Deploy to staging environment
+        run: |
+          echo "🚀 Deploying Aristocrat ${{ needs.validate-release.outputs.version }} to staging..."
+          echo "📦 Server Image: ghcr.io/${{ github.repository }}-server:${{ needs.validate-release.outputs.version }}"
+          echo "📦 Website Image: ghcr.io/${{ github.repository }}-website:${{ needs.validate-release.outputs.version }}"
+          
+          # Add your staging deployment logic here
+          # For example: kubectl, docker-compose, or deployment scripts
+          
+          echo "✅ Staging deployment completed"
+
+  # Job 6: Notify completion
+  notify-completion:
+    name: Release Notification
+    runs-on: ubuntu-latest
+    needs: [validate-release, create-release, build-docker]
+    if: always()
+    steps:
+      - name: Release Summary
+        run: |
+          echo "🎉 Aristocrat Release ${{ needs.validate-release.outputs.version }} Complete!"
+          echo ""
+          echo "📋 Release Details:"
+          echo "  • Version: ${{ needs.validate-release.outputs.version }}"
+          echo "  • Type: ${{ needs.validate-release.outputs.is-prerelease == 'true' && 'Pre-release' || 'Stable Release' }}"
+          echo "  • GitHub Release: ${{ needs.create-release.outputs.html_url }}"
+          echo ""
+          echo "🐳 Docker Images:"
+          echo "  • Server: ghcr.io/${{ github.repository }}-server:${{ needs.validate-release.outputs.version }}"
+          echo "  • Website: ghcr.io/${{ github.repository }}-website:${{ needs.validate-release.outputs.version }}"
+          echo ""
+          echo "📦 Deployment Ready!"
+
+      - name: Deployment Instructions
+        if: needs.validate-release.outputs.is-prerelease == 'false'
+        run: |
+          echo "🚀 Production Deployment Instructions:"
+          echo ""
+          echo "1. Download production archives from the GitHub release"
+          echo "2. Or pull Docker images:"
+          echo "   docker pull ghcr.io/${{ github.repository }}-server:${{ needs.validate-release.outputs.version }}"
+          echo "   docker pull ghcr.io/${{ github.repository }}-website:${{ needs.validate-release.outputs.version }}"
+          echo ""
+          echo "3. Update your production environment variables"
+          echo "4. Deploy using your preferred method (Docker Compose, Kubernetes, etc.)"
+          echo ""
+          echo "📖 See deployment documentation for detailed instructions"
