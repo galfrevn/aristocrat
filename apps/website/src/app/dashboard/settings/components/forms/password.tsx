@@ -61,7 +61,7 @@ export function SettingsPasswordForm() {
 								<Input
 									id={field.name}
 									name={field.name}
-									type="text"
+									type="password"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									className="mt-1 bg-secondary text-secondary-foreground"
