@@ -8,7 +8,7 @@ const f = createUploadthing();
 export const aristocratFileRouter = {
 	profilePicturesRouter: f({
 		image: {
-			maxFileSize: '1MB',
+			maxFileSize: '2MB',
 			maxFileCount: 1,
 		},
 	})
