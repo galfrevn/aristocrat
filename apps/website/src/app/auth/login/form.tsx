@@ -68,6 +68,7 @@ export function AuthenticationLoginForm() {
 								<Input
 									id={field.name}
 									name={field.name}
+									placeholder="tu@email.com"
 									type="email"
 									value={field.state.value}
 									onBlur={field.handleBlur}
@@ -94,6 +95,7 @@ export function AuthenticationLoginForm() {
 								<PasswordInput
 									id={field.name}
 									name={field.name}
+									placeholder="••••••••"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}

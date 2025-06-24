@@ -76,6 +76,7 @@ export function AuthenticationRegisterForm() {
 								<Input
 									id={field.name}
 									name={field.name}
+									placeholder="John Doe"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
@@ -101,6 +102,7 @@ export function AuthenticationRegisterForm() {
 								<Input
 									id={field.name}
 									name={field.name}
+									placeholder="tu@email.com"
 									type="email"
 									value={field.state.value}
 									onBlur={field.handleBlur}
@@ -127,6 +129,7 @@ export function AuthenticationRegisterForm() {
 								<PasswordInput
 									id={field.name}
 									name={field.name}
+									placeholder="••••••••"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
