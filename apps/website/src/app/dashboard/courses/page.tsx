@@ -1,21 +1,23 @@
-import { Button } from '@/components/ui/button';
-
 import { AristocratPageHeader } from '@/app/dashboard/components/header';
 import { AristocratPageWrapper } from '@/app/dashboard/components/wrapper';
 
 import { AristocratCoursesFilters } from '@/app/dashboard/courses/components/filters';
+import { AristocratCourseGenerationProvider } from '@/app/dashboard/courses/components/generator/context';
+import { AristocratCourseGenerationModal } from '@/app/dashboard/courses/components/generator/modal';
+import { AristocratCourseGenerationTrigger } from '@/app/dashboard/courses/components/generator/trigger';
 
 const AristocratDashboardCoursesPage = () => (
-	<AristocratPageWrapper
-		action={<Button variant="secondary">Genera un nuevo curso</Button>}
-	>
-		<AristocratPageHeader
-			title="Cursos"
-			description="Organice sus cursos generados por AI aquí."
-		/>
+	<AristocratCourseGenerationProvider>
+		<AristocratPageWrapper action={<AristocratCourseGenerationTrigger />}>
+			<AristocratPageHeader
+				title="Cursos"
+				description="Organice sus cursos generados por AI aquí."
+			/>
 
-		<AristocratCoursesFilters />
-	</AristocratPageWrapper>
+			<AristocratCoursesFilters />
+		</AristocratPageWrapper>
+		<AristocratCourseGenerationModal />
+	</AristocratCourseGenerationProvider>
 );
 
 export default AristocratDashboardCoursesPage;
