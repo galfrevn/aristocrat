@@ -7,19 +7,20 @@
   ],
   "scripts": {
     "check": "biome check --write .",
+    "prepare": "husky",
     "dev": "turbo dev",
     "dev:franco": "concurrently \"npm --prefix apps/website run dev\" \"npm --prefix apps/server run dev\"",
     "build": "turbo build",
     "check-types": "turbo check-types",
+    "dev:db": "docker run --name aristocrat-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=aristocrat -p 5432:5432 -d postgres:16",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F server dev",
-    "db:push": "turbo -F server db:push",
-    "db:studio": "turbo -F server db:studio",
-    "db:generate": "turbo -F server db:generate",
-    "db:migrate": "turbo -F server db:migrate"
+    "dev:server": "turbo -F @aristocrat/server dev",
+    "db:push": "turbo -F @aristocrat/server db:push",
+    "db:studio": "turbo -F @aristocrat/server db:studio",
+    "db:generate": "turbo -F @aristocrat/server db:generate",
+    "db:migrate": "turbo -F @aristocrat/server db:migrate"
   },
-  "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "concurrently": "^9.2.0",
