@@ -1,10 +1,9 @@
+import { exec, spawn } from 'node:child_process';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
 import { promisify } from 'node:util';
-import { spawn, exec } from 'node:child_process';
-
-import ora from 'ora';
 import chalk from 'chalk';
+import ora from 'ora';
 
 const execAsync = promisify(exec);
 
@@ -27,18 +26,28 @@ class DevelopmentEnvironment {
 	async run(): Promise<void> {
 		try {
 			console.clear();
-			console.log(chalk.bgBlack.white.bold(' Aristocrat :: Starting development environment '));
+			console.log(
+				chalk.bgBlack.white.bold(
+					' Aristocrat :: Starting development environment ',
+				),
+			);
 			console.log();
 
 			await this.checkSystemRequirements();
 			await this.handleDatabaseContainer();
 			await this.waitForDatabase();
+			await this.setupEnvironmentFiles();
 			await this.runDatabaseMigrations();
 			await this.startDevelopmentServers();
-			
-			console.log(chalk.green.bold('✅ Development environment setup completed!'));
+
+			console.log(
+				chalk.green.bold('✅ Development environment setup completed!'),
+			);
 		} catch (error) {
-			console.error(chalk.red.bold('❌ Failed to start development environment:'), error);
+			console.error(
+				chalk.red.bold('❌ Failed to start development environment:'),
+				error,
+			);
 			process.exit(1);
 		}
 	}
@@ -48,7 +57,7 @@ class DevelopmentEnvironment {
 	 */
 	private async checkSystemRequirements(): Promise<void> {
 		console.log(chalk.bold('Check system requirements'));
-		
+
 		const systemRequirements = [
 			{ command: 'docker --version', toolName: 'Docker' },
 			{ command: 'bun --version', toolName: 'Bun' },
@@ -57,16 +66,20 @@ class DevelopmentEnvironment {
 		for (let i = 0; i < systemRequirements.length; i++) {
 			const { command, toolName } = systemRequirements[i];
 			const spinner = ora(chalk.dim(`Checking ${toolName}...`)).start();
-			
+
 			try {
 				await execAsync(command);
 				spinner.succeed(chalk.green(`${toolName} is available`));
 			} catch {
-				spinner.fail(chalk.red(`${toolName} is not installed or not available in PATH`));
-				throw new Error(`${toolName} is not installed or not available in PATH`);
+				spinner.fail(
+					chalk.red(`${toolName} is not installed or not available in PATH`),
+				);
+				throw new Error(
+					`${toolName} is not installed or not available in PATH`,
+				);
 			}
 		}
-		
+
 		console.log();
 	}
 
@@ -84,15 +97,31 @@ class DevelopmentEnvironment {
 				containerExists && (await this.containerIsRunning());
 
 			if (!containerExists) {
-				spinner.text = chalk.dim(`Creating container: ${this.DATABASE_CONTAINER_NAME}...`);
+				spinner.text = chalk.dim(
+					`Creating container: ${this.DATABASE_CONTAINER_NAME}...`,
+				);
 				await this.createContainer();
-				spinner.succeed(chalk.green(`Container ${this.DATABASE_CONTAINER_NAME} created successfully`));
+				spinner.succeed(
+					chalk.green(
+						`Container ${this.DATABASE_CONTAINER_NAME} created successfully`,
+					),
+				);
 			} else if (!containerIsRunning) {
-				spinner.text = chalk.dim(` Starting container: ${this.DATABASE_CONTAINER_NAME}...`);
+				spinner.text = chalk.dim(
+					` Starting container: ${this.DATABASE_CONTAINER_NAME}...`,
+				);
 				await this.startContainer();
-				spinner.succeed(chalk.green(`Container ${this.DATABASE_CONTAINER_NAME} started successfully`));
+				spinner.succeed(
+					chalk.green(
+						`Container ${this.DATABASE_CONTAINER_NAME} started successfully`,
+					),
+				);
 			} else {
-				spinner.succeed(chalk.green(`Container ${this.DATABASE_CONTAINER_NAME} is already running`));
+				spinner.succeed(
+					chalk.green(
+						`Container ${this.DATABASE_CONTAINER_NAME} is already running`,
+					),
+				);
 			}
 
 			console.log();
@@ -170,7 +199,9 @@ class DevelopmentEnvironment {
 	private async waitForDatabase(): Promise<void> {
 		console.log(chalk.bold('Wait for database'));
 
-		const spinner = ora(chalk.dim('Waiting for database to be ready...')).start();
+		const spinner = ora(
+			chalk.dim('Waiting for database to be ready...'),
+		).start();
 
 		const maxConnectionAttempts = 30;
 		const retryDelayMs = 1000;
@@ -190,13 +221,19 @@ class DevelopmentEnvironment {
 					return;
 				} catch {
 					if (currentAttempt === maxConnectionAttempts) {
-						spinner.fail(chalk.red('Database failed to become ready within timeout period'));
+						spinner.fail(
+							chalk.red(
+								'Database failed to become ready within timeout period',
+							),
+						);
 						throw new Error(
 							'Database failed to become ready within timeout period',
 						);
 					}
 
-					spinner.text = chalk.dim(`Waiting for database... (attempt ${currentAttempt}/${maxConnectionAttempts})`);
+					spinner.text = chalk.dim(
+						`Waiting for database... (attempt ${currentAttempt}/${maxConnectionAttempts})`,
+					);
 					await this.sleep(retryDelayMs);
 				}
 			}
@@ -207,6 +244,47 @@ class DevelopmentEnvironment {
 	}
 
 	/**
+	 * Setup environment files for database package
+	 */
+	private async setupEnvironmentFiles(): Promise<void> {
+		console.log(chalk.bold('Setup environment files'));
+
+		const spinner = ora(chalk.dim('Creating environment files...')).start();
+
+		const databaseUrl = `postgres://${this.DATABASE_USERNAME}:${this.DATABASE_PASSWORD}@localhost:${this.DATABASE_HOST_PORT}/${this.DATABASE_NAME}`;
+		const environmentContent = `DATABASE_URL=${databaseUrl}`;
+
+		try {
+			// Create .env file for database package
+			const databaseEnvPath = join(
+				this.PROJECT_ROOT_PATH,
+				'packages',
+				'database',
+				'.env',
+			);
+			writeFileSync(databaseEnvPath, environmentContent);
+
+			// Create .env file for server app if it doesn't exist
+			const serverEnvPath = join(
+				this.PROJECT_ROOT_PATH,
+				'apps',
+				'server',
+				'.env',
+			);
+			if (!existsSync(serverEnvPath)) {
+				writeFileSync(serverEnvPath, environmentContent);
+			}
+
+			spinner.succeed(chalk.green('Environment files created successfully'));
+		} catch (error) {
+			spinner.fail(chalk.red('Failed to create environment files'));
+			throw error;
+		}
+
+		console.log();
+	}
+
+	/**
 	 * Run database migrations if needed
 	 */
 	private async runDatabaseMigrations(): Promise<void> {
@@ -214,19 +292,10 @@ class DevelopmentEnvironment {
 
 		const spinner = ora(chalk.dim('Checking database migrations...')).start();
 
-		const serverDirectoryPath = join(this.PROJECT_ROOT_PATH, 'apps', 'server');
-		const environmentFilePath = join(serverDirectoryPath, '.env');
-
-		if (!existsSync(environmentFilePath)) {
-			spinner.warn(chalk.yellow('No .env file found in server directory, skipping migrations'));
-			console.log();
-			return;
-		}
-
 		try {
 			spinner.text = chalk.dim('Updating database schema...');
-			// Check if we need to run migrations by comparing schema
-			await execAsync('cd apps/server && bun run db:push', {
+			// Use the database package for migrations
+			await execAsync('cd packages/database && bun run db:push', {
 				cwd: this.PROJECT_ROOT_PATH,
 				env: { ...process.env, NODE_ENV: 'development' },
 			});
@@ -258,7 +327,9 @@ class DevelopmentEnvironment {
 
 		// Handle graceful shutdown
 		const cleanupResources = async () => {
-			console.log(chalk.yellow('\n🛑 Shutting down development environment...'));
+			console.log(
+				chalk.yellow('\n🛑 Shutting down development environment...'),
+			);
 			developmentProcess.kill('SIGTERM');
 
 			// Optionally stop the database container (uncomment if desired)
@@ -273,7 +344,9 @@ class DevelopmentEnvironment {
 
 		developmentProcess.on('exit', (exitCode) => {
 			if (exitCode !== 0) {
-				console.error(chalk.red.bold(`Development servers exited with code ${exitCode}`));
+				console.error(
+					chalk.red.bold(`Development servers exited with code ${exitCode}`),
+				);
 				process.exit(exitCode || 1);
 			}
 		});
