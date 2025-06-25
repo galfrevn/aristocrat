@@ -84,6 +84,9 @@ jobs:
         if: needs.setup.outputs.bun-cache-hit != 'true'
         run: bun install --frozen-lockfile
 
+      - name: Build packages
+        run: turbo build --filter="@aristocrat/database"
+
       - name: Run type checking
         run: bun run check-types
 
