@@ -1,6 +1,7 @@
 'use client';
 
 import { useForm } from '@tanstack/react-form';
+import { useCallback } from 'react';
 import z from 'zod/v4';
 import {
 	type CourseGenerationDifficulty,
@@ -72,25 +73,38 @@ export const AristocratCourseGenerationForm = ({
 		},
 	});
 
-	const onValidateStep = (currentStep: CourseGenerationStep) =>
-		getCourseGenerationStepValidator(currentStep, courseGenerationFormInstance);
+	const onValidateStep = useCallback(
+		(currentStep: CourseGenerationStep) =>
+			getCourseGenerationStepValidator(
+				currentStep,
+				courseGenerationFormInstance,
+			),
+		[courseGenerationFormInstance],
+	);
 
 	return (
 		<>
 			<SmoothModalBody>
 				<SmoothTabs value={currentStep} onValueChange={setCurrentStep}>
 					<SmoothTabContent value="input">
-						<courseGenerationFormInstance.Subscribe>
-							{(field) => (
+						<courseGenerationFormInstance.Subscribe
+							selector={(state) => {
+								const videoId = state.values.youtubeVideoId;
+								return {
+									videoId,
+									isValid: videoId && validateYouTubeInput(videoId),
+								};
+							}}
+						>
+							{({ videoId, isValid }) => (
 								<>
-									{field.values.youtubeVideoId &&
-										validateYouTubeInput(field.values.youtubeVideoId) && (
-											<YouTubePlayer
-												className="mb-4"
-												expandButtonClassName="hidden"
-												videoId={field.values.youtubeVideoId}
-											/>
-										)}
+									{isValid && (
+										<YouTubePlayer
+											className="mb-4"
+											expandButtonClassName="hidden"
+											videoId={videoId}
+										/>
+									)}
 								</>
 							)}
 						</courseGenerationFormInstance.Subscribe>

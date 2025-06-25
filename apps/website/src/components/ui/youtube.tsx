@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Maximize2, Minimize2, Play } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface YouTubePlayerProps {
 	videoId: string;
@@ -124,20 +123,18 @@ export function YouTubePlayer({
 				)}
 			>
 				<motion.div
-					layoutId={`youtube-player-${videoId}`}
+					layoutId={`youtube-${videoId}`}
 					className={cn(
-						'overflow-hidden border bg-card text-card-foreground shadow-lg rounded-xl',
+						'overflow-hidden rounded-xl border bg-card text-card-foreground shadow-lg',
 						containerClassName,
 					)}
 				>
 					<motion.div
-						layoutId={`youtube-player-content-${videoId}`}
 						className={cn('relative aspect-video bg-muted', playerClassName)}
 					>
 						{!playing && (
 							<>
 								<motion.div
-									layoutId={`youtube-player-thumbnail-container-${videoId}`}
 									className={cn(
 										'absolute inset-0 bg-gradient-to-br from-muted to-muted/80',
 										thumbnailClassName,
@@ -145,7 +142,6 @@ export function YouTubePlayer({
 								>
 									{getThumbnailUrl() && (
 										<motion.img
-											layoutId={`youtube-player-thumbnail-${videoId}`}
 											src={getThumbnailUrl()}
 											alt={title || 'Video thumbnail'}
 											className={cn(
@@ -156,15 +152,12 @@ export function YouTubePlayer({
 									)}
 								</motion.div>
 
-								<motion.div
-									layoutId={`youtube-player-content-overlay-${videoId}`}
-									className="absolute inset-0 flex flex-col items-center justify-center z-10"
-								>
+								<motion.div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
 									<Button
 										size="lg"
 										variant="secondary"
 										className={cn(
-											'relative h-16 w-16 rounded-full border border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0',
+											'relative h-16 w-16 rounded-full border border-border/20 bg-background/80 p-0 backdrop-blur-sm md:h-20 md:w-20',
 											'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
 											playButtonClassName,
 										)}
@@ -181,9 +174,8 @@ export function YouTubePlayer({
 
 									{title && (
 										<motion.h3
-											layoutId={`youtube-player-title-${videoId}`}
 											className={cn(
-												'mt-4 max-w-xs text-center text-sm font-medium text-secondary/90 md:max-w-md md:text-base',
+												'mt-4 max-w-xs text-center font-medium text-secondary/90 text-sm md:max-w-md md:text-base',
 												titleClassName,
 											)}
 										>
@@ -235,17 +227,16 @@ export function YouTubePlayer({
 							aria-label="Close expanded video"
 						/>
 
-						<div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+						<div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
 							<motion.div
-								layoutId={`youtube-player-${videoId}`}
+								layoutId={`youtube-${videoId}`}
 								className={cn(
-									'overflow-hidden border bg-card text-card-foreground shadow-xl rounded-lg pointer-events-auto',
-									'w-[90vw] max-w-[1200px] max-h-[90vh] aspect-video',
+									'pointer-events-auto overflow-hidden rounded-lg border bg-card text-card-foreground shadow-xl',
+									'aspect-video max-h-[90vh] w-[90vw] max-w-[1200px]',
 									expandedClassName,
 								)}
 							>
 								<motion.div
-									layoutId={`youtube-player-content-${videoId}`}
 									className={cn(
 										'relative aspect-video bg-muted',
 										playerClassName,
@@ -254,7 +245,6 @@ export function YouTubePlayer({
 									{!playing && (
 										<>
 											<motion.div
-												layoutId={`youtube-player-thumbnail-container-${videoId}`}
 												className={cn(
 													'absolute inset-0 bg-gradient-to-br from-muted to-muted/80',
 													thumbnailClassName,
@@ -262,7 +252,6 @@ export function YouTubePlayer({
 											>
 												{getThumbnailUrl() && (
 													<motion.img
-														layoutId={`youtube-player-thumbnail-${videoId}`}
 														src={getThumbnailUrl()}
 														alt={title || 'Video thumbnail'}
 														className={cn(
@@ -273,15 +262,12 @@ export function YouTubePlayer({
 												)}
 											</motion.div>
 
-											<motion.div
-												layoutId={`youtube-player-content-overlay-${videoId}`}
-												className="absolute inset-0 flex flex-col items-center justify-center z-10"
-											>
+											<motion.div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
 												<Button
 													size="lg"
 													variant="secondary"
 													className={cn(
-														'relative h-16 w-16 rounded-full border border-border/20 bg-background/80 backdrop-blur-sm md:h-20 md:w-20 p-0',
+														'relative h-16 w-16 rounded-full border border-border/20 bg-background/80 p-0 backdrop-blur-sm md:h-20 md:w-20',
 														'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
 														playButtonClassName,
 													)}
@@ -298,9 +284,8 @@ export function YouTubePlayer({
 
 												{title && (
 													<motion.h3
-														layoutId={`youtube-player-title-${videoId}`}
 														className={cn(
-															'mt-4 max-w-xs text-center text-sm font-medium text-foreground/90 md:max-w-md md:text-base',
+															'mt-4 max-w-xs text-center font-medium text-foreground/90 text-sm md:max-w-md md:text-base',
 															titleClassName,
 														)}
 													>
@@ -367,12 +352,11 @@ function YouTubePlayerControls({
 		<AnimatePresence>
 			{shouldShow && (
 				<motion.div
-					layoutId={`youtube-player-controls-${videoId}`}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.2 }}
-					className={cn('absolute right-2 top-2 z-20', controlsClassName)}
+					className={cn('absolute top-2 right-2 z-20', controlsClassName)}
 				>
 					<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
 						<Button
