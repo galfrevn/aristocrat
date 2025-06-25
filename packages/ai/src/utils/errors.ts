@@ -28,12 +28,20 @@ export function createAIError(
 	modelName: string,
 ): AIError {
 	if (unknownError instanceof Error) {
+		const errorWithCode = unknownError as Error & {
+			status?: number;
+			code?: string;
+		};
+
 		const isRateLimitError =
+			errorWithCode.status === 429 ||
+			errorWithCode.code === 'rate_limit_exceeded' ||
 			unknownError.message.includes('rate limit') ||
 			unknownError.message.includes('quota') ||
 			unknownError.message.includes('429');
 
 		const isServerError =
+			(errorWithCode.status && errorWithCode.status >= 500) ||
 			unknownError.message.includes('500') ||
 			unknownError.message.includes('502') ||
 			unknownError.message.includes('503') ||

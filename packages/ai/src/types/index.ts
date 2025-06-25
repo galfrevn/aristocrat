@@ -6,12 +6,7 @@ import type {
 } from 'ai';
 import type { z } from 'zod';
 
-export type AIProvider =
-	| 'openai'
-	| 'anthropic'
-	| 'google'
-	| 'mistral'
-	| 'perplexity';
+export type AIProvider = 'openai' | 'anthropic' | 'perplexity';
 
 export interface AIConfiguration {
 	provider: AIProvider;

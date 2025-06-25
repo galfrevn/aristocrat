@@ -3,7 +3,7 @@
 		"target": "ES2022",
 		"lib": ["ES2022"],
 		"module": "ESNext",
-		"moduleResolution": "bundler",
+		"moduleResolution": "node",
 		"moduleDetection": "force",
 		"noEmit": false,
 		"composite": false,
@@ -14,7 +14,7 @@
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowJs": true,
-		"types": ["node"],
+		"types": ["node", "jest"],
 		"declaration": true,
 		"outDir": "dist",
 		"esModuleInterop": true,
@@ -24,6 +24,6 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx"],
-	"exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+	"include": ["src/**/*.ts", "src/**/*.tsx", "__tests__/**/*.test.ts"],
+	"exclude": ["node_modules", "dist"]
 }
