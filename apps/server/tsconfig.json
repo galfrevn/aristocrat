@@ -14,6 +14,7 @@
 		"jsxImportSource": "hono/jsx"
 	},
 	"include": ["src/**/*"],
+	"references": [{ "path": "../../packages/database" }],
 	"tsc-alias": {
 		"resolveFullPaths": true
 	}
