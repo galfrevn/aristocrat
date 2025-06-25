@@ -17,20 +17,18 @@
     "apps/server": {
       "name": "@aristocrat/server",
       "dependencies": {
+        "@aristocrat/database": "workspace:*",
         "@hono/trpc-server": "^0.3.4",
         "@trpc/client": "^11.0.0",
         "@trpc/server": "^11.0.0",
         "better-auth": "^1.2.9",
         "dotenv": "^16.4.7",
-        "drizzle-orm": "^0.38.4",
         "hono": "^4.7.6",
-        "pg": "^8.14.1",
         "zod": "^3.25.16",
       },
       "devDependencies": {
+        "@aristocrat/typescript": "workspace:*",
         "@types/bun": "^1.2.6",
-        "@types/pg": "^8.11.11",
-        "drizzle-kit": "^0.30.5",
         "tsc-alias": "^1.8.11",
         "typescript": "^5.8.2",
       },
@@ -77,6 +75,7 @@
         "zod": "^3.25.16",
       },
       "devDependencies": {
+        "@aristocrat/typescript": "workspace:*",
         "@tailwindcss/postcss": "^4",
         "@tanstack/react-query-devtools": "^5.80.5",
         "@types/node": "^20",
@@ -89,13 +88,38 @@
     "apps/workers": {
       "name": "@aristocrat/workers",
     },
+    "packages/database": {
+      "name": "@aristocrat/database",
+      "version": "1.0.0",
+      "dependencies": {
+        "drizzle-orm": "^0.38.4",
+        "pg": "^8.14.1",
+      },
+      "devDependencies": {
+        "@aristocrat/typescript": "workspace:*",
+        "@types/pg": "^8.11.11",
+        "drizzle-kit": "^0.30.5",
+        "typescript": "^5.8.2",
+      },
+    },
+    "packages/typescript": {
+      "name": "@aristocrat/typescript",
+      "version": "1.0.0",
+      "devDependencies": {
+        "typescript": "^5.8.2",
+      },
+    },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
     "@ampproject/remapping": ["@ampproject/remapping@2.3.0", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw=="],
 
+    "@aristocrat/database": ["@aristocrat/database@workspace:packages/database"],
+
     "@aristocrat/server": ["@aristocrat/server@workspace:apps/server"],
+
+    "@aristocrat/typescript": ["@aristocrat/typescript@workspace:packages/typescript"],
 
     "@aristocrat/website": ["@aristocrat/website@workspace:apps/website"],
 
