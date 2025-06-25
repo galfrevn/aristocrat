@@ -67,9 +67,7 @@ export const AristocratCourseGenerationForm = ({
 	const courseGeneartionFormInstance = useForm({
 		defaultValues: courseGenerationFormDefaultValues,
 		validators: courseGenerationFormValidators,
-		onSubmit: async ({ value }) => {
-			console.log(value);
-		},
+		onSubmit: async ({ value }) => {},
 	});
 
 	const onValidateStep = (currentStep: CourseGenerationStep) =>
