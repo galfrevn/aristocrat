@@ -1,12 +1,10 @@
 import { AristocratPageHeader } from '@/app/dashboard/components/header';
 import { AristocratPageWrapper } from '@/app/dashboard/components/wrapper';
-
-import { AristocratDashboardSettingsSidebar } from '@/app/dashboard/settings/components/sidebar';
 import { AristocratDashboardSettingsCards } from '@/app/dashboard/settings/components/cards';
-
-import { SettingsProfileForm } from '@/app/dashboard/settings/components/forms/profile';
-import { SettingsPasswordForm } from '@/app/dashboard/settings/components/forms/password';
 import { SettingsAvatarForm } from '@/app/dashboard/settings/components/forms/avatar';
+import { SettingsPasswordForm } from '@/app/dashboard/settings/components/forms/password';
+import { SettingsProfileForm } from '@/app/dashboard/settings/components/forms/profile';
+import { AristocratDashboardSettingsSidebar } from '@/app/dashboard/settings/components/sidebar';
 
 const AristocratDashboardSettingsPage = () => (
 	<AristocratPageWrapper>

@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
+import { type HTMLMotionProps, motion } from 'motion/react';
 import { Checkbox as CheckboxPrimitive } from 'radix-ui';
-import { motion, type HTMLMotionProps } from 'motion/react';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -14,16 +14,18 @@ function Checkbox({ className, onCheckedChange, ...props }: CheckboxProps) {
 		props?.checked ?? props?.defaultChecked ?? false,
 	);
 
-	React.useEffect(() => {
-		if (props?.checked !== undefined) setIsChecked(props.checked);
-	}, [props?.checked]);
+	const checkedState = React.useMemo(() => {
+		return props?.checked !== undefined ? props.checked : isChecked;
+	}, [props?.checked, isChecked]);
 
 	const handleCheckedChange = React.useCallback(
 		(checked: boolean) => {
-			setIsChecked(checked);
+			if (props?.checked === undefined) {
+				setIsChecked(checked);
+			}
 			onCheckedChange?.(checked);
 		},
-		[onCheckedChange],
+		[onCheckedChange, props?.checked],
 	);
 
 	return (
@@ -52,7 +54,7 @@ function Checkbox({ className, onCheckedChange, ...props }: CheckboxProps) {
 						stroke="currentColor"
 						className="size-3.5"
 						initial="unchecked"
-						animate={isChecked ? 'checked' : 'unchecked'}
+						animate={checkedState ? 'checked' : 'unchecked'}
 					>
 						<title>Checkbox</title>
 						<motion.path

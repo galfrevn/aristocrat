@@ -514,7 +514,7 @@ interface SmoothTabsNavigationProps<T> {
 	onPrevious?: () => void;
 	onNext?: () => void;
 	onValidateStep?: (currentStep: T) => Promise<boolean> | boolean;
-	tabs?: string[];
+	tabs?: readonly string[];
 	isValidating?: boolean;
 }
 
