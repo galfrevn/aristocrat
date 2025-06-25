@@ -12,9 +12,9 @@ const config: Config = {
 		// },
 	],
 	// Global Jest configuration
-	collectCoverage: false,
+	collectCoverage: true,
 	coverageDirectory: 'coverage',
-	coverageReporters: ['text', 'lcov', 'html'],
+	coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
 	verbose: true,
 	// Ignore node_modules and build artifacts
 	testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/'],
