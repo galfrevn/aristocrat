@@ -1,5 +1,6 @@
 import { database } from '@aristocrat/database';
 import * as schema from '@aristocrat/database/schema';
+
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 

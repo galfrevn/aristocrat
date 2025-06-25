@@ -318,7 +318,7 @@ jobs:
 
       - name: Verify database schema
         run: |
-          cd apps/server
+          cd packages/database
           bun run --eval "
             import { db } from './src/db/index.ts';
             console.log('✅ Database connection successful');

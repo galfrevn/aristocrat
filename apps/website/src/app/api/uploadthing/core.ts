@@ -5,7 +5,7 @@ import { UploadThingError } from 'uploadthing/server';
 
 const f = createUploadthing();
 
-export const aristocratFileRouter = {
+export const aristocratFileRouter: FileRouter = {
 	profilePicturesRouter: f({
 		image: {
 			maxFileSize: '2MB',
