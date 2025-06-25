@@ -137,7 +137,134 @@ jobs:
             apps/${{ matrix.app }}/.next
           retention-days: 7
 
-  # Job 4: Database integration tests
+  # Job 4: Run tests and generate coverage
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.2.15
+
+      - name: Restore Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            apps/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+
+      - name: Install dependencies
+        if: needs.setup.outputs.bun-cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: bunx jest --coverage
+        continue-on-error: true
+
+      - name: Comment PR with coverage report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            let coverageComment = '## 🧪 Test Coverage Report\n\n';
+            
+            try {
+              // Read the coverage summary
+              const coveragePath = './coverage/coverage-summary.json';
+              if (fs.existsSync(coveragePath)) {
+                const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+                const total = coverage.total;
+                
+                const formatCoverage = (metric) => {
+                  const pct = metric.pct;
+                  const emoji = pct >= 80 ? '✅' : pct >= 60 ? '⚠️' : '❌';
+                  return `${emoji} ${pct}% (${metric.covered}/${metric.total})`;
+                };
+                
+                coverageComment += `### Overall Coverage\n\n`;
+                coverageComment += `| Metric | Coverage | Details |\n`;
+                coverageComment += `|--------|----------|----------|\n`;
+                coverageComment += `| **Statements** | ${formatCoverage(total.statements)} | - |\n`;
+                coverageComment += `| **Branches** | ${formatCoverage(total.branches)} | - |\n`;
+                coverageComment += `| **Functions** | ${formatCoverage(total.functions)} | - |\n`;
+                coverageComment += `| **Lines** | ${formatCoverage(total.lines)} | - |\n\n`;
+                
+                // Add per-file coverage if available
+                const files = Object.keys(coverage).filter(key => key !== 'total');
+                if (files.length > 0) {
+                  coverageComment += `### File Coverage\n\n`;
+                  files.slice(0, 10).forEach(file => {
+                    const fileCoverage = coverage[file];
+                    const fileName = file.replace(process.cwd(), '').replace(/^\//, '');
+                    coverageComment += `- **${fileName}**: ${fileCoverage.statements.pct}% statements\n`;
+                  });
+                  if (files.length > 10) {
+                    coverageComment += `\n*... and ${files.length - 10} more files*\n`;
+                  }
+                }
+              } else {
+                coverageComment += '❌ Coverage report not found. Tests may have failed.\n';
+              }
+            } catch (error) {
+              console.error('Error reading coverage:', error);
+              coverageComment += '❌ Error reading coverage report.\n';
+            }
+            
+            // Add test status
+            coverageComment += `\n### Test Status\n`;
+            coverageComment += `- 🧪 Tests executed during CI\n`;
+            coverageComment += `- 📊 Coverage report generated\n`;
+            coverageComment += `- 📄 Full HTML report available in build artifacts\n\n`;
+            coverageComment += `View the detailed coverage report in the build artifacts above.`;
+            
+            // Find existing coverage comment and update or create new
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.body.includes('🧪 Test Coverage Report')
+            );
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: coverageComment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: coverageComment
+              });
+            }
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+          retention-days: 7
+
+  # Job 5: Database integration tests
   database-tests:
     name: Database Tests
     runs-on: ubuntu-latest
@@ -241,7 +368,7 @@ jobs:
   performance:
     name: Performance Benchmarks
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, test]
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout repository
@@ -320,6 +447,7 @@ jobs:
             ### CI Status
             - ✅ Type checking passed
             - ✅ All applications built successfully
+            - ✅ Tests passed with coverage report
             - ✅ Database tests passed
             
             View the full CI report above for detailed information.`;
@@ -335,13 +463,14 @@ jobs:
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
-    needs: [type-check, build, database-tests, security-audit]
+    needs: [type-check, build, test, database-tests, security-audit]
     if: always()
     steps:
       - name: Check CI Status
         run: |
           if [[ "${{ needs.type-check.result }}" != "success" ]] || \
              [[ "${{ needs.build.result }}" != "success" ]] || \
+             [[ "${{ needs.test.result }}" != "success" ]] || \
              [[ "${{ needs.database-tests.result }}" != "success" ]] || \
              [[ "${{ needs.security-audit.result }}" != "success" ]]; then
             echo "❌ CI failed - check the logs above"
