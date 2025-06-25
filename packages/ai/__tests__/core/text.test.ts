@@ -1,37 +1,28 @@
-import { generateAIText } from '@/core/text';
 import type { AIConfiguration, AITextOptions } from '@/types';
 
-// Mock the dependencies
+// Create mock functions
+const mockGenerateText = jest.fn();
+const mockCreateProvider = jest.fn();
+const mockCreateAIError = jest.fn();
+const mockWithRetry = jest.fn((fn) => fn());
+
+// Mock the modules
 jest.mock('ai', () => ({
-	generateText: jest.fn(),
+	generateText: mockGenerateText,
 }));
 
 jest.mock('@/providers', () => ({
-	createProvider: jest.fn(),
+	createProvider: mockCreateProvider,
 }));
 
-jest.mock('@/utils/errors', () => {
-	const actual = jest.requireActual('@/utils/errors');
-	return {
-		...actual,
-		createAIError: jest.fn(),
-		withRetry: jest.fn((fn) => fn()),
-	};
-});
+jest.mock('@/utils/errors', () => ({
+	...jest.requireActual('@/utils/errors'),
+	createAIError: mockCreateAIError,
+	withRetry: mockWithRetry,
+}));
 
-import { generateText } from 'ai';
-import { createProvider } from '@/providers';
-import { createAIError } from '@/utils/errors';
-
-const mockGenerateText = generateText as jest.MockedFunction<
-	typeof generateText
->;
-const mockCreateProvider = createProvider as jest.MockedFunction<
-	typeof createProvider
->;
-const mockCreateAIError = createAIError as jest.MockedFunction<
-	typeof createAIError
->;
+// Import after mocks are set up
+const { generateAIText } = require('@/core/text');
 
 describe('generateAIText', () => {
 	const mockConfiguration: AIConfiguration = {
