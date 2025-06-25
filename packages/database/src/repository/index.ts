@@ -1,0 +1,1 @@
+export { CoursesRepository } from './courses';

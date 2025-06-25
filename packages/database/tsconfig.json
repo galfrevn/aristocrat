@@ -9,7 +9,6 @@
 		"declaration": true,
 		"declarationMap": true,
 		"types": ["node"],
-		"jsx": "react-jsx",
 		"noEmit": false
 	},
 	"include": ["src"]

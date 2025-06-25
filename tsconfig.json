@@ -1,21 +1,9 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"lib": ["ES2022"],
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"strict": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"resolveJsonModule": true
-	},
+	"files": [],
 	"references": [
-		{
-			"path": "./packages/ai"
-		}
-	],
-	"include": [],
-	"exclude": ["node_modules", "dist", "build"]
+		{ "path": "apps/server" },
+		{ "path": "apps/website" },
+		{ "path": "packages/ai" },
+		{ "path": "packages/database" }
+	]
 }
