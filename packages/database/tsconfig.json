@@ -1,11 +1,12 @@
 {
-	"extends": "@aristocrat/typescript/node.json",
+	"extends": "@aristocrat/typescript/schemas/node.json",
 	"compilerOptions": {
-		"baseUrl": "./src",
-		"outDir": "./dist",
-		"rootDir": "./src",
+		"composite": true,
+		"noEmit": false,
+		"moduleResolution": "node",
+		"baseUrl": ".",
 		"paths": {
-			"@/*": ["*"]
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": ["src/**/*"]

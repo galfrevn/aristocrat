@@ -1,28 +1,15 @@
 {
+	"extends": "@aristocrat/typescript/schemas/node.json",
 	"compilerOptions": {
-		"target": "ES2022",
-		"lib": ["ES2022"],
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"moduleDetection": "force",
-		"noEmit": false,
-		"composite": false,
-		"strict": true,
-		"downlevelIteration": true,
-		"skipLibCheck": true,
-		"jsx": "react-jsx",
-		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
-		"allowJs": true,
-		"types": ["node", "jest"],
-		"declaration": true,
-		"outDir": "dist",
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"baseUrl": ".",
+		"baseUrl": "./",
 		"paths": {
-			"@/*": ["src/*"]
-		}
+			"@/*": ["./src/*"]
+		},
+		"outDir": "dist",
+		"noEmit": false,
+		"composite": true,
+		"types": ["node", "jest"],
+		"jsx": "react-jsx"
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx", "__tests__/**/*.test.ts"],
 	"exclude": ["node_modules", "dist"]

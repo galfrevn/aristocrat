@@ -1,5 +1,5 @@
 {
-	"extends": "@aristocrat/typescript/nextjs.json",
+	"extends": "@aristocrat/typescript/schemas/nextjs.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {

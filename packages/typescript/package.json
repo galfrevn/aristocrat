@@ -2,11 +2,12 @@
 	"name": "@aristocrat/typescript",
 	"version": "1.0.0",
 	"description": "Shared TypeScript configurations for the Aristocrat monorepo",
-	"main": "base.json",
+	"main": "schemas/base.json",
 	"files": [
-		"base.json",
-		"node.json",
-		"nextjs.json"
+		"schemas/base.json",
+		"schemas/node.json",
+		"schemas/nextjs.json",
+		"schemas/test.json"
 	],
 	"keywords": [
 		"typescript",
