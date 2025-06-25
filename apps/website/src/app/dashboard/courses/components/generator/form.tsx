@@ -6,9 +6,9 @@ import {
 	type CourseGenerationDifficulty,
 	type CourseGenerationLanguage,
 	type CourseGenerationStep,
-	courseGenenerationDifficultyWordings,
 	courseGenerationAvailableLanguages,
 	courseGenerationDifficulties,
+	courseGenerationDifficultyWordings,
 	getCourseGenerationStepValidator,
 } from '@/app/dashboard/courses/components/generator/steps';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,7 +54,7 @@ const courseGenerationFormValidators = {
 };
 
 interface CourseGenerationFormValues {
-	availableSteps: Array<CourseGenerationStep>;
+	availableSteps: readonly CourseGenerationStep[];
 	currentStep: CourseGenerationStep;
 	setCurrentStep: (step: CourseGenerationStep) => void;
 }
@@ -64,21 +64,23 @@ export const AristocratCourseGenerationForm = ({
 	currentStep,
 	setCurrentStep,
 }: CourseGenerationFormValues) => {
-	const courseGeneartionFormInstance = useForm({
+	const courseGenerationFormInstance = useForm({
 		defaultValues: courseGenerationFormDefaultValues,
 		validators: courseGenerationFormValidators,
-		onSubmit: async ({ value }) => {},
+		onSubmit: async () => {
+			// TODO: Implement form submission logic
+		},
 	});
 
 	const onValidateStep = (currentStep: CourseGenerationStep) =>
-		getCourseGenerationStepValidator(currentStep, courseGeneartionFormInstance);
+		getCourseGenerationStepValidator(currentStep, courseGenerationFormInstance);
 
 	return (
 		<>
 			<SmoothModalBody>
 				<SmoothTabs value={currentStep} onValueChange={setCurrentStep}>
 					<SmoothTabContent value="input">
-						<courseGeneartionFormInstance.Subscribe>
+						<courseGenerationFormInstance.Subscribe>
 							{(field) => (
 								<>
 									{field.values.youtubeVideoId &&
@@ -91,8 +93,8 @@ export const AristocratCourseGenerationForm = ({
 										)}
 								</>
 							)}
-						</courseGeneartionFormInstance.Subscribe>
-						<courseGeneartionFormInstance.Field name="youtubeVideoId">
+						</courseGenerationFormInstance.Subscribe>
+						<courseGenerationFormInstance.Field name="youtubeVideoId">
 							{(field) => (
 								<div className="space-y-2">
 									<Label htmlFor={field.name}>URL del video de YouTube</Label>
@@ -131,10 +133,10 @@ export const AristocratCourseGenerationForm = ({
 									</div>
 								</div>
 							)}
-						</courseGeneartionFormInstance.Field>
+						</courseGenerationFormInstance.Field>
 					</SmoothTabContent>
 					<SmoothTabContent value="language">
-						<courseGeneartionFormInstance.Field name="language">
+						<courseGenerationFormInstance.Field name="language">
 							{(field) => (
 								<div className="space-y-2">
 									<Label htmlFor={field.name}>Idioma deseado</Label>
@@ -171,10 +173,10 @@ export const AristocratCourseGenerationForm = ({
 									</div>
 								</div>
 							)}
-						</courseGeneartionFormInstance.Field>
+						</courseGenerationFormInstance.Field>
 					</SmoothTabContent>
 					<SmoothTabContent value="settings">
-						<courseGeneartionFormInstance.Field name="difficulty">
+						<courseGenerationFormInstance.Field name="difficulty">
 							{(field) => (
 								<div className="mb-6 space-y-2">
 									<Label htmlFor={field.name}>
@@ -192,15 +194,15 @@ export const AristocratCourseGenerationForm = ({
 										<SelectContent>
 											{courseGenerationDifficulties.map((difficulty) => (
 												<SelectItem key={difficulty} value={difficulty}>
-													{courseGenenerationDifficultyWordings[difficulty]}
+													{courseGenerationDifficultyWordings[difficulty]}
 												</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
 								</div>
 							)}
-						</courseGeneartionFormInstance.Field>
-						<courseGeneartionFormInstance.Field name="shouldIncludeAssessment">
+						</courseGenerationFormInstance.Field>
+						<courseGenerationFormInstance.Field name="shouldIncludeAssessment">
 							{(field) => (
 								<div className="flex items-start gap-3">
 									<Checkbox
@@ -221,7 +223,7 @@ export const AristocratCourseGenerationForm = ({
 									</div>
 								</div>
 							)}
-						</courseGeneartionFormInstance.Field>
+						</courseGenerationFormInstance.Field>
 					</SmoothTabContent>
 				</SmoothTabs>
 			</SmoothModalBody>
@@ -231,7 +233,7 @@ export const AristocratCourseGenerationForm = ({
 						tabs={availableSteps}
 						previousLabel="Atrás"
 						onValidateStep={onValidateStep}
-						onNext={() => courseGeneartionFormInstance.handleSubmit()}
+						onNext={() => courseGenerationFormInstance.handleSubmit()}
 						nextLabel={
 							currentStep === 'settings' ? 'Generar curso' : 'Siguiente'
 						}

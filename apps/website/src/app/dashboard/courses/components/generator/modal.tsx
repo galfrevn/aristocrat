@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { useAristocratCourseGeneration } from '@/app/dashboard/courses/components/generator/context';
-
+import { AristocratCourseGenerationForm } from '@/app/dashboard/courses/components/generator/form';
+import {
+	type CourseGenerationStep,
+	courseGenerationSteps,
+} from '@/app/dashboard/courses/components/generator/steps';
 import {
 	SmoothModal,
 	SmoothModalContent,
@@ -10,12 +14,6 @@ import {
 	SmoothModalHeader,
 	SmoothModalTitle,
 } from '@/components/ui/modal';
-import { AristocratCourseGenerationForm } from '@/app/dashboard/courses/components/generator/form';
-
-import {
-	type CourseGenerationStep,
-	courseGenerationSteps,
-} from '@/app/dashboard/courses/components/generator/steps';
 
 export const AristocratCourseGenerationModal = () => {
 	const { isModalOpen, setIsModalOpen } = useAristocratCourseGeneration();

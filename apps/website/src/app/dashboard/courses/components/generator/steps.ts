@@ -20,29 +20,60 @@ export type CourseGenerationDifficulty =
 export type CourseGenerationLanguage =
 	(typeof courseGenerationAvailableLanguages)[number];
 
-export const courseGenenerationDifficultyWordings = {
+export const courseGenerationDifficultyWordings = {
 	medium: 'Intermedio',
 	hard: 'Avanzado',
 	easy: 'Fácil',
 };
 
-type StepValidator = (formInstance: any) => Promise<boolean> | boolean;
+type FormFieldName =
+	| 'youtubeVideoId'
+	| 'language'
+	| 'shouldIncludeAssessment'
+	| 'difficulty';
 
-const courseGenerationInputStepValidator = async (formInstance: any) => {
+interface FormInstance {
+	validateField: <TField extends FormFieldName>(
+		field: TField,
+		cause: 'change' | 'blur' | 'submit',
+	) => unknown[] | Promise<unknown[]>;
+}
+
+type StepValidator = (formInstance: FormInstance) => Promise<boolean> | boolean;
+
+const courseGenerationInputStepValidator = async (
+	formInstance: FormInstance,
+): Promise<boolean> => {
 	const errors = await formInstance.validateField('youtubeVideoId', 'submit');
-	return errors.length === 0;
+	return Array.isArray(errors) ? errors.length === 0 : !errors;
 };
 
-const courseGenerationLanguageStepValidator = async (formInstance: any) => {
+const courseGenerationLanguageStepValidator = async (
+	formInstance: FormInstance,
+): Promise<boolean> => {
 	const errors = await formInstance.validateField('language', 'submit');
-	return errors.length === 0;
+	return Array.isArray(errors) ? errors.length === 0 : !errors;
 };
 
-const courseGenerationSettingsStepValidator = async (formInstance: any) => {
+const courseGenerationSettingsStepValidator = async (
+	formInstance: FormInstance,
+): Promise<boolean> => {
 	// For settings step, validate all fields in that step
-	const difficultyErrors = await formInstance.validateField('difficulty', 'submit');
-	const assessmentErrors = await formInstance.validateField('shouldIncludeAssessment', 'submit');
-	return difficultyErrors.length === 0 && assessmentErrors.length === 0;
+	const difficultyErrors = await formInstance.validateField(
+		'difficulty',
+		'submit',
+	);
+	const assessmentErrors = await formInstance.validateField(
+		'shouldIncludeAssessment',
+		'submit',
+	);
+	const difficultyValid = Array.isArray(difficultyErrors)
+		? difficultyErrors.length === 0
+		: !difficultyErrors;
+	const assessmentValid = Array.isArray(assessmentErrors)
+		? assessmentErrors.length === 0
+		: !assessmentErrors;
+	return difficultyValid && assessmentValid;
 };
 
 type CourseGenerationFormValidators = Record<
@@ -60,5 +91,6 @@ const courseGenerationStepsValidators: CourseGenerationFormValidators = {
 
 export const getCourseGenerationStepValidator = (
 	step: CourseGenerationStep,
-	formInstance: any,
-) => courseGenerationStepsValidators[step](formInstance);
+	formInstance: FormInstance,
+): Promise<boolean> | boolean =>
+	courseGenerationStepsValidators[step](formInstance);
