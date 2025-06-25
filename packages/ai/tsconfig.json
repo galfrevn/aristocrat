@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"moduleDetection": "force",
+		"noEmit": false,
+		"composite": false,
+		"strict": true,
+		"downlevelIteration": true,
+		"skipLibCheck": true,
+		"jsx": "react-jsx",
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": true,
+		"types": ["node"],
+		"declaration": true,
+		"outDir": "dist",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		}
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}
