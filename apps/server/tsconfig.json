@@ -1,21 +1,17 @@
 {
+	"extends": "@aristocrat/typescript/node.json",
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"verbatimModuleSyntax": true,
-		"strict": true,
-		"skipLibCheck": true,
 		"baseUrl": "./",
+		"outDir": "./dist",
+		"rootDir": "./src",
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"outDir": "./dist",
 		"types": ["bun"],
-		"composite": true,
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx"
 	},
+	"include": ["src/**/*"],
 	"tsc-alias": {
 		"resolveFullPaths": true
 	}
