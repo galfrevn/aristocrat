@@ -1,0 +1,19 @@
+{
+	"name": "@aristocrat/typescript",
+	"version": "1.0.0",
+	"description": "Shared TypeScript configurations for the Aristocrat monorepo",
+	"main": "base.json",
+	"files": [
+		"base.json",
+		"node.json",
+		"nextjs.json"
+	],
+	"keywords": [
+		"typescript",
+		"tsconfig",
+		"configuration"
+	],
+	"devDependencies": {
+		"typescript": "^5.8.2"
+	}
+}
