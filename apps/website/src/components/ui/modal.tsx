@@ -1,7 +1,7 @@
 'use client';
 
+import { motion } from 'motion/react';
 import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -11,7 +11,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { motion } from 'motion/react';
 
 // Animation variants
 const dialogVariants = {
@@ -125,7 +124,7 @@ export function SmoothModalContent({
 	enableHeightAnimation = true,
 }: SmoothModalContentProps) {
 	return (
-		<DialogContent className="max-w-[380px] p-0 border-0 bg-transparent shadow-none overflow-hidden">
+		<DialogContent className="max-w-[380px] overflow-hidden border-0 bg-transparent p-0 shadow-none">
 			<motion.div
 				variants={dialogVariants}
 				initial="hidden"
@@ -139,7 +138,7 @@ export function SmoothModalContent({
 						mass: 0.8,
 					},
 				}}
-				className={`bg-white dark:bg-zinc-950 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-6 overflow-hidden ${className}`}
+				className={`space-y-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 ${className}`}
 			>
 				{children}
 			</motion.div>
@@ -178,7 +177,7 @@ export function SmoothModalTitle({
 }: SmoothModalTitleProps) {
 	return (
 		<DialogTitle
-			className={`flex font-medium text-2xl items-center gap-2.5 ${className}`}
+			className={`flex items-center gap-2.5 font-medium text-2xl ${className}`}
 		>
 			{logo}
 			<motion.span variants={itemVariants}>{children}</motion.span>
@@ -437,16 +436,11 @@ export function SmoothTabsTrigger({
 			type="button"
 			disabled={disabled}
 			onClick={() => !disabled && setActiveTab(value)}
-			className={`
-				relative flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium
-				transition-all duration-200 ease-in-out
-				focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-				disabled:pointer-events-none disabled:opacity-50
-				${
-					isActive
-						? 'bg-background text-foreground shadow-sm'
-						: 'hover:bg-background/60 hover:text-foreground'
-				}
+			className={`relative flex-1 whitespace-nowrap rounded-md px-3 py-2 font-medium text-sm transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50${
+				isActive
+					? 'bg-background text-foreground shadow-sm'
+					: 'hover:bg-background/60 hover:text-foreground'
+			}
 				${className}
 			`}
 			whileHover={{ scale: disabled ? 1 : 1.02 }}
@@ -570,6 +564,14 @@ export function SmoothTabsNavigation<T>({
 			setValidatingNext(false);
 		}
 
+		// If not the last step, just navigate without calling onNext
+		if (!isLastStep) {
+			if (canGoNext) {
+				setActiveTab(tabs[currentIndex + 1]);
+			}
+			return;
+		}
+
 		// Proceed with navigation
 		if (onNext) {
 			onNext();
@@ -579,7 +581,8 @@ export function SmoothTabsNavigation<T>({
 	};
 
 	const isLastStep = currentIndex === tabs.length - 1;
-	const isNextDisabled = (!canGoNext && !isLastStep) || validatingNext || isValidating;
+	const isNextDisabled =
+		(!canGoNext && !isLastStep) || validatingNext || isValidating;
 
 	return (
 		<motion.div
@@ -592,7 +595,7 @@ export function SmoothTabsNavigation<T>({
 					variant="outline"
 					onClick={handlePrevious}
 					disabled={!canGoPrevious || validatingNext || isValidating}
-					className="flex-1"
+					className="flex-1 font-sans"
 				>
 					{previousLabel}
 				</Button>
@@ -605,7 +608,7 @@ export function SmoothTabsNavigation<T>({
 					type="button"
 					onClick={handleNext}
 					disabled={isNextDisabled}
-					className="flex-1"
+					className="flex-1 font-sans"
 				>
 					{validatingNext ? 'Validating...' : nextLabel}
 				</Button>

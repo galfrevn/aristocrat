@@ -1,9 +1,19 @@
 'use client';
 
-import z from 'zod/v4';
-
 import { useForm } from '@tanstack/react-form';
-
+import z from 'zod/v4';
+import {
+	type CourseGenerationDifficulty,
+	type CourseGenerationLanguage,
+	type CourseGenerationStep,
+	courseGenenerationDifficultyWordings,
+	courseGenerationAvailableLanguages,
+	courseGenerationDifficulties,
+	getCourseGenerationStepValidator,
+} from '@/app/dashboard/courses/components/generator/steps';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
 	SmoothModalBody,
 	SmoothModalFooter,
@@ -11,7 +21,6 @@ import {
 	SmoothTabs,
 	SmoothTabsNavigation,
 } from '@/components/ui/modal';
-
 import {
 	Select,
 	SelectContent,
@@ -19,23 +28,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { YouTubePlayer } from '@/components/ui/youtube';
-
-import {
-	type CourseGenerationStep,
-	type CourseGenerationLanguage,
-	type CourseGenerationDifficulty,
-	getCourseGenerationStepValidator,
-	courseGenerationAvailableLanguages,
-	courseGenerationDifficulties,
-	courseGenenerationDifficultyWordings,
-} from '@/app/dashboard/courses/components/generator/steps';
-
 import { validateYouTubeInput } from '@/utils/youtube';
-import { Checkbox } from '@/components/ui/checkbox';
 
 const courseGenerationFormDefaultValues = {
 	youtubeVideoId: '',
@@ -73,16 +67,10 @@ export const AristocratCourseGenerationForm = ({
 	const courseGeneartionFormInstance = useForm({
 		defaultValues: courseGenerationFormDefaultValues,
 		validators: courseGenerationFormValidators,
-		onSubmit: async ({ value }) => {},
+		onSubmit: async ({ value }) => {
+			console.log(value);
+		},
 	});
-
-	const handleSubmitCourseGenerationForm = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-		void courseGeneartionFormInstance.handleSubmit();
-	};
-
-	courseGeneartionFormInstance.validateField('youtubeVideoId', 'change');
 
 	const onValidateStep = (currentStep: CourseGenerationStep) =>
 		getCourseGenerationStepValidator(currentStep, courseGeneartionFormInstance);
@@ -245,6 +233,7 @@ export const AristocratCourseGenerationForm = ({
 						tabs={availableSteps}
 						previousLabel="Atrás"
 						onValidateStep={onValidateStep}
+						onNext={() => courseGeneartionFormInstance.handleSubmit()}
 						nextLabel={
 							currentStep === 'settings' ? 'Generar curso' : 'Siguiente'
 						}
