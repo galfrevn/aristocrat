@@ -6,11 +6,11 @@
 			"@/*": ["./src/*"]
 		},
 		"outDir": "dist",
-		"noEmit": false,
-		"composite": true,
-		"types": ["node", "jest"],
-		"jsx": "react-jsx"
+		"declaration": true,
+		"declarationMap": true,
+		"types": ["node"],
+		"jsx": "react-jsx",
+		"noEmit": false
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx", "__tests__/**/*.test.ts"],
-	"exclude": ["node_modules", "dist"]
+	"include": ["src"]
 }
