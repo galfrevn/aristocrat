@@ -1,0 +1,29 @@
+{
+	"name": "@aristocrat/database",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./schema": "./src/schema/index.ts",
+		"./repository": "./src/repository/index.ts",
+		"./utils": "./src/utils/index.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.38.4",
+		"pg": "^8.14.1"
+	},
+	"devDependencies": {
+		"@aristocrat/typescript": "workspace:*",
+		"typescript": "^5.8.2",
+		"drizzle-kit": "^0.30.5",
+		"@types/pg": "^8.11.11"
+	}
+}
