@@ -1,56 +1,73 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 
-type Props = {
+interface MetricCardProps {
   icon: React.ReactNode;
   title: string;
   value: string | number;
   subtitle?: string;
   badge?: React.ReactNode;
   className?: string;
-};
+}
 
-const AristocratMetricCard = ({
+const AristocratMetricCard: React.FC<MetricCardProps> = ({
   icon,
   title,
   value,
   subtitle,
   badge,
   className = "flex-2 bg-sidebar-foreground",
-}: Props) => {
+}) => {
+  const cardId = `metric-card-${title.toLowerCase().replace(/\s+/g, "-")}`;
+
   return (
-    <Card className={`w-auto ${className} border-none shadow-none`} role="region" aria-label={`Métrica: ${title}`}>
+    <Card
+      id={cardId}
+      className={`w-auto ${className} border-none shadow-none group hover:shadow-md transition-shadow duration-200`}
+      role="article"
+      aria-labelledby={`${cardId}-title`}
+      aria-describedby={subtitle ? `${cardId}-subtitle` : undefined}
+    >
       <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 sm:py-4">
-        <div className="flex items-start justify-between">
-          <span
-            className="flex items-center justify-center bg-accent text-primary size-12 rounded-lg"
-            aria-label="Icono de la métrica"
-            role="img"
+        <header className="flex items-start justify-between">
+          <div
+            className="flex items-center justify-center bg-accent text-primary size-12 rounded-lg group-hover:rotate-6 transition-transform duration-300 ease-in-out"
+            aria-hidden="true"
           >
             {icon}
-          </span>
+          </div>
           {badge && (
-            <span
+            <div
               className="flex items-center rounded-lg text-muted-foreground text-center text-sm min-h-6 ml-2"
-              aria-label="Badge de la métrica"
+              aria-label="Indicador adicional"
             >
               {badge}
-            </span>
+            </div>
           )}
-        </div>
-        <div className="flex flex-col space-y-1 mt-2">
-          <h3 className="text-md font-medium text-muted-foreground" aria-label="Título de la métrica">
+        </header>
+
+        <section className="flex flex-col space-y-2">
+          <h3
+            id={`${cardId}-title`}
+            className="text-md font-medium text-muted-foreground leading-tight"
+          >
             {title}
           </h3>
-          <p className="text-4xl font-bold" aria-label="Valor de la métrica">
+          <p
+            className="text-4xl font-bold leading-none tracking-tight"
+            aria-label={`Valor de ${title}: ${value}`}
+          >
             {value}
           </p>
           {subtitle && (
-            <p className="text-sm text-muted-foreground" aria-label="Subtítulo de la métrica">
+            <p
+              id={`${cardId}-subtitle`}
+              className="text-base text-muted-foreground leading-relaxed"
+            >
               {subtitle}
             </p>
           )}
-        </div>
+        </section>
       </div>
     </Card>
   );

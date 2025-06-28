@@ -4,6 +4,9 @@ import { AristocratPageWrapper } from "@/app/dashboard/components/wrapper";
 import AristocratMetricCard from "./components/metric-card";
 import AristocratStatCard from "./components/stat-card";
 
+import AristocratPopularTopicsCard from "./components/popular-topics/popular-topics-card";
+import AristocratFunFactsCard from "./components/fun-facts-card";
+
 import {
   RiLeafLine,
   RiTimeLine,
@@ -20,9 +23,10 @@ import { Badge } from "@/components/ui/badge";
 const AristocratDashboardMetricsPage = () => (
   <AristocratPageWrapper>
     <AristocratPageHeader
-      title="Tus Metricas de Aprendizaje"
-      description="Descubre como Aristocrat esta transformando tu manera de aprender"
+      title="Tu Progreso en Aristocrat"
+      description="Así es como estás dominando nuevas habilidades con Aristocrat"
     />
+
     <section className="flex flex-wrap gap-4">
       <AristocratMetricCard
         className="flex-3 bg-sidebar text-white"
@@ -63,9 +67,26 @@ const AristocratDashboardMetricsPage = () => (
     </section>
 
     <section className="flex flex-wrap gap-4">
-      <AristocratStatCard title="Cursos Completados" value={12} icon={<RiBookOpenLine />} />
-      <AristocratStatCard title="Examenes Realizados" value={24} icon={<RiTrophyLine />} />
-      <AristocratStatCard title="Puntuacion Promedio" value="87%" icon={<RiFocus2Line />} />
+      <AristocratStatCard
+        title="Cursos Completados"
+        value={12}
+        icon={<RiBookOpenLine />}
+      />
+      <AristocratStatCard
+        title="Examenes Realizados"
+        value={24}
+        icon={<RiTrophyLine />}
+      />
+      <AristocratStatCard
+        title="Puntuacion Promedio"
+        value="87%"
+        icon={<RiFocus2Line />}
+      />
+    </section>
+
+    <section className="flex flex-wrap gap-4">
+      <AristocratPopularTopicsCard />
+      <AristocratFunFactsCard />
     </section>
   </AristocratPageWrapper>
 );
