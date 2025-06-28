@@ -2,7 +2,7 @@ import type { Layout } from '@/types/layout';
 
 interface AristocratAuthLayoutProps extends Layout {}
 
-export const AristocratAuthLayout = (props: AristocratAuthLayoutProps) => {
+export default function AristocratAuthLayout(props: AristocratAuthLayoutProps) {
 	const { children } = props;
 
 	return (
@@ -11,5 +11,3 @@ export const AristocratAuthLayout = (props: AristocratAuthLayoutProps) => {
 		</div>
 	);
 };
-
-export default AristocratAuthLayout;

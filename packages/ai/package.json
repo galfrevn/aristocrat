@@ -1,0 +1,53 @@
+{
+	"name": "@aristocrat/ai",
+	"version": "0.1.0",
+	"description": "Production-grade AI utilities and providers for Aristocrat",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/src/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/src/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "tsup && tsc",
+		"dev": "tsup --watch",
+		"check-types": "tsc --noEmit",
+		"clean": "rm -rf dist"
+	},
+	"keywords": [
+		"ai",
+		"vercel-ai-sdk",
+		"openai",
+		"anthropic",
+		"streaming"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"@ai-sdk/anthropic": "^1.2.12",
+		"@ai-sdk/openai": "^1.3.22",
+		"@ai-sdk/perplexity": "^1.1.9",
+		"ai": "^4.0.51",
+		"zod": "^3.24.1"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.1",
+		"tsup": "^8.5.0",
+		"typescript": "^5.7.2"
+	},
+	"peerDependencies": {
+		"react": ">=18.0.0"
+	},
+	"peerDependenciesMeta": {
+		"react": {
+			"optional": true
+		}
+	}
+}
