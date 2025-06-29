@@ -3,6 +3,7 @@ import type { Config } from 'jest';
 const config: Config = {
 	// Use projects for workspace configuration
 	projects: [
+		'<rootDir>/apps/transcripter/jest.config.ts',
 		'<rootDir>/packages/ai/jest.config.ts',
 		'<rootDir>/packages/database/jest.config.ts',
 	],

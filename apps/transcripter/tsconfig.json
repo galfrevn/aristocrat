@@ -6,7 +6,7 @@
 			"@/*": ["./src/*"]
 		},
 		"outDir": "dist",
-		"types": ["node", "bun-types"],
+		"types": ["node", "bun-types", "jest"],
 		"noEmit": false
 	},
 	"include": ["src"]

@@ -8,7 +8,10 @@
 		"dev:build": "docker build -f Dockerfile.dev -t transcript-service-dev .",
 		"dev:setup": "npm run dev:build && npm run dev",
 		"dev:down": "docker kill $(docker ps -q --filter 'publish=3002')",
-		"start": "bun run src/index.ts"
+		"start": "bun run src/index.ts",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:coverage": "jest --coverage"
 	},
 	"dependencies": {
 		"better-auth": "^1.2.7",
@@ -18,7 +21,10 @@
 	},
 	"devDependencies": {
 		"@types/bun": "^1.2.6",
+		"@types/jest": "^29.5.14",
 		"@types/jsonwebtoken": "^9.0.7",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.2.5",
 		"tsc-alias": "^1.8.11",
 		"typescript": "^5.8.2"
 	}
