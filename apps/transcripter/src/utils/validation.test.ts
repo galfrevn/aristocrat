@@ -1,9 +1,8 @@
-import { describe, expect, test } from 'bun:test';
 import {
 	InvalidVideoIdError,
 	isValidYouTubeVideoId,
 	validateAndSanitizeVideoId,
-} from '../validation';
+} from './validation';
 
 describe('YouTube Video ID Validation', () => {
 	describe('isValidYouTubeVideoId', () => {
