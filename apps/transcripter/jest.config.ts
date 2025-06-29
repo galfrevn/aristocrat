@@ -4,7 +4,7 @@ const config: Config = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: ['<rootDir>/src/**/*.test.{js,ts}'],
+	testMatch: ['<rootDir>/__tests__/**/*.test.{js,ts}'],
 	moduleNameMapper: {
 		'^@/(.*)$': '<rootDir>/src/$1',
 	},

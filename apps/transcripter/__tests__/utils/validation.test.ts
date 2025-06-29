@@ -2,7 +2,7 @@ import {
 	InvalidVideoIdError,
 	isValidYouTubeVideoId,
 	validateAndSanitizeVideoId,
-} from './validation';
+} from '@/utils/validation';
 
 describe('YouTube Video ID Validation', () => {
 	describe('isValidYouTubeVideoId', () => {
