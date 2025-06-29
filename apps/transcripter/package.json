@@ -1,0 +1,25 @@
+{
+	"name": "@aristocrat/transcripter",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "./scripts/dev.sh",
+		"dev:docker": "docker run --rm -it -p 3002:3002 -v $(pwd)/src:/app/src -v /app/node_modules transcript-service-dev bun --watch src/index.ts",
+		"dev:build": "docker build -f Dockerfile.dev -t transcript-service-dev .",
+		"dev:setup": "npm run dev:build && npm run dev",
+		"dev:down": "docker kill $(docker ps -q --filter 'publish=3002')",
+		"start": "bun run src/index.ts"
+	},
+	"dependencies": {
+		"better-auth": "^1.2.7",
+		"dotenv": "^16.4.7",
+		"hono": "^4.7.6",
+		"jsonwebtoken": "^9.0.2"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.2.6",
+		"@types/jsonwebtoken": "^9.0.7",
+		"tsc-alias": "^1.8.11",
+		"typescript": "^5.8.2"
+	}
+}
