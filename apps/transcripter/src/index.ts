@@ -19,13 +19,7 @@ app.use(
 
 app.route('/', aristocratTranscripterCoreRouter);
 
-const SERVER_PORT = process.env.PORT || 3002;
-
-console.log(
-	`Transcript service running on port ${SERVER_PORT} with Bun and Hono`,
-);
-
 export default {
-	port: SERVER_PORT,
+	port: process.env.PORT,
 	fetch: app.fetch,
 };

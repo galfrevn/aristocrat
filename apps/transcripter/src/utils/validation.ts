@@ -1,6 +1,10 @@
 /**
  * YouTube video ID validation utilities
  */
+import { InvalidVideoIdError } from '@/errors';
+
+// Re-export for tests
+export { InvalidVideoIdError };
 
 /**
  * YouTube video ID regex pattern
@@ -8,18 +12,6 @@
  * containing alphanumeric characters, hyphens, and underscores
  */
 const YOUTUBE_VIDEO_ID_REGEX = /^[a-zA-Z0-9_-]{11}$/;
-
-/**
- * Error thrown when a video ID is invalid
- */
-export class InvalidVideoIdError extends Error {
-	constructor(videoId: string) {
-		super(
-			`Invalid YouTube video ID: ${videoId}. Video IDs must be exactly 11 characters containing only letters, numbers, hyphens, and underscores.`,
-		);
-		this.name = 'InvalidVideoIdError';
-	}
-}
 
 /**
  * Validates if a string is a valid YouTube video ID
@@ -42,7 +34,9 @@ export function isValidYouTubeVideoId(videoId: string): boolean {
  */
 export function validateAndSanitizeVideoId(videoId: string): string {
 	if (typeof videoId !== 'string') {
-		throw new InvalidVideoIdError(String(videoId));
+		throw new InvalidVideoIdError(String(videoId), {
+			originalType: typeof videoId,
+		});
 	}
 
 	// Remove any whitespace
@@ -50,7 +44,7 @@ export function validateAndSanitizeVideoId(videoId: string): string {
 
 	// Validate the sanitized ID
 	if (!isValidYouTubeVideoId(sanitized)) {
-		throw new InvalidVideoIdError(sanitized);
+		throw new InvalidVideoIdError(sanitized, { originalValue: videoId });
 	}
 
 	return sanitized;
