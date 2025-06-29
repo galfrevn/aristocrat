@@ -1,0 +1,13 @@
+{
+	"extends": "@aristocrat/typescript/schemas/node.json",
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"outDir": "dist",
+		"types": ["node", "bun-types"],
+		"noEmit": false
+	},
+	"include": ["src"]
+}
