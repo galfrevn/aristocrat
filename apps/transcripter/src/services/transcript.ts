@@ -1,3 +1,4 @@
+import { FileOperationError, SubtitleParsingError } from '@/errors';
 import { parseSRTSubtitles } from '@/parsers/srt';
 import { parseVTTSubtitles } from '@/parsers/vtt';
 import type { TranscriptSegment } from '@/types';
@@ -7,19 +8,25 @@ import {
 	downloadSubtitles,
 	selectBestSubtitleFile,
 } from '@/utils/files';
+import {
+	logger,
+	logTranscriptionError,
+	logTranscriptionStart,
+	logTranscriptionSuccess,
+} from '@/utils/logger';
 
 export class TranscriptService {
 	async extractTranscript(
 		videoId: string,
 		language = 'es',
+		userId?: string,
 	): Promise<{
 		transcript: TranscriptSegment[];
 		segments: number;
 		file: string;
 	}> {
-		console.log(
-			`Extracting transcript for video: ${videoId}, language: ${language}`,
-		);
+		const startTime = Date.now();
+		logTranscriptionStart(videoId, language, userId);
 
 		const temporaryDirectory = await createTempDirectory(videoId);
 
@@ -33,21 +40,65 @@ export class TranscriptService {
 				availableSubtitleFiles,
 			);
 
-			console.log(`Processing subtitle file: ${selectedSubtitleFile}`);
+			logger.info('Processing subtitle file', {
+				videoId,
+				language,
+				userId,
+				selectedFile: selectedSubtitleFile,
+				availableFiles: availableSubtitleFiles,
+			});
 
-			const subtitleFileContent = await Bun.file(
-				`${temporaryDirectory}/${selectedSubtitleFile}`,
-			).text();
+			let subtitleFileContent: string;
+			try {
+				subtitleFileContent = await Bun.file(
+					`${temporaryDirectory}/${selectedSubtitleFile}`,
+				).text();
+			} catch (error) {
+				throw new FileOperationError(
+					'read',
+					`${temporaryDirectory}/${selectedSubtitleFile}`,
+					error as Error,
+					{ videoId, language, userId },
+				);
+			}
 
-			const parsedTranscript = selectedSubtitleFile.endsWith('.vtt')
-				? parseVTTSubtitles(subtitleFileContent)
-				: parseSRTSubtitles(subtitleFileContent);
+			let parsedTranscript: TranscriptSegment[];
+			try {
+				parsedTranscript = selectedSubtitleFile.endsWith('.vtt')
+					? parseVTTSubtitles(subtitleFileContent)
+					: parseSRTSubtitles(subtitleFileContent);
+			} catch (error) {
+				throw new SubtitleParsingError(selectedSubtitleFile, error as Error, {
+					videoId,
+					language,
+					userId,
+				});
+			}
+
+			const duration = Date.now() - startTime;
+			logTranscriptionSuccess(
+				videoId,
+				language,
+				parsedTranscript.length,
+				duration,
+				userId,
+			);
 
 			return {
 				transcript: parsedTranscript,
 				segments: parsedTranscript.length,
 				file: selectedSubtitleFile,
 			};
+		} catch (error) {
+			const duration = Date.now() - startTime;
+			logTranscriptionError(
+				error as Error,
+				videoId,
+				language,
+				userId,
+				duration,
+			);
+			throw error;
 		} finally {
 			await cleanupTempDirectory(temporaryDirectory);
 		}

@@ -19,8 +19,6 @@ cleanup() {
 # Trap SIGINT (Ctrl+C) and SIGTERM
 trap cleanup SIGINT SIGTERM
 
-echo "Starting development container..."
-
 # Start container in background and capture container ID
 CONTAINER_ID=$(docker run --rm -d -p 3002:3002 -e NODE_ENV=development -v $(pwd)/src:/app/src -v /app/node_modules transcript-service-dev bun --watch src/index.ts)
 
