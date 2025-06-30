@@ -1,33 +1,6 @@
 import { Card } from '@/components/ui/card';
+import { topicsData } from '../../data';
 import { AristocratPopularTopicsGraph } from './popular-topics-graph';
-
-interface Topic {
-	id: number;
-	topic: string;
-	hours: number;
-	courses: number;
-}
-
-const topTopics: Topic[] = [
-	{
-		id: 1,
-		topic: 'JavaScript',
-		hours: 72,
-		courses: 6,
-	},
-	{
-		id: 2,
-		topic: 'SQL',
-		hours: 65,
-		courses: 5,
-	},
-	{
-		id: 3,
-		topic: 'TypeScript',
-		hours: 43,
-		courses: 4,
-	},
-];
 
 export const AristocratPopularTopicsCard = () => {
 	return (
@@ -42,7 +15,7 @@ export const AristocratPopularTopicsCard = () => {
 				<section className="w-full">
 					<h2 className="text-xl">Tus especialidades</h2>
 					<ul className="list-none">
-						{topTopics.map((topic) => (
+						{topicsData.map((topic) => (
 							<li
 								key={topic.id}
 								className="flex items-center gap-4 border-border/50 border-b py-3 last:border-b-0"

@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import type React from 'react';
 import { Card } from '@/components/ui/card';
 
@@ -20,8 +21,22 @@ export const AristocratMetricCard: React.FC<MetricCardProps> = ({
 }) => {
 	const cardId = `metric-card-${title.toLowerCase().replace(/\s+/g, '-')}`;
 
+	const MotionCard = motion(Card);
+
 	return (
-		<Card
+		<MotionCard
+			initial={{
+				opacity: 0,
+				y: 50,
+			}}
+			animate={{
+				opacity: 1,
+				y: 0,
+			}}
+			transition={{
+				type: 'spring',
+				duration: 1,
+			}}
 			id={cardId}
 			className={`w-auto ${className} border-none shadow-none`}
 			aria-labelledby={`${cardId}-title`}
@@ -62,6 +77,6 @@ export const AristocratMetricCard: React.FC<MetricCardProps> = ({
 					)}
 				</section>
 			</div>
-		</Card>
+		</MotionCard>
 	);
 };
