@@ -8,19 +8,22 @@ import {
 	RiTimeLine,
 	RiTrophyLine,
 } from '@remixicon/react';
+
 import { AristocratPageHeader } from '@/app/dashboard/components/header';
 import { AristocratPageWrapper } from '@/app/dashboard/components/wrapper';
+
 import { Badge } from '@/components/ui/badge';
-import AristocratFunFactsCard from './components/fun-facts-card';
-import AristocratMetricCard from './components/metric-card';
-import AristocratPopularTopicsCard from './components/popular-topics/popular-topics-card';
-import AristocratStatCard from './components/stat-card';
+
+import { AristocratFunFactsCard } from './components/fun-facts-card';
+import { AristocratMetricCard } from './components/metric-card';
+import { AristocratPopularTopicsCard } from './components/popular-topics/popular-topics-card';
+import { AristocratStatCard } from './components/stat-card';
 
 const AristocratDashboardMetricsPage = () => (
 	<AristocratPageWrapper>
 		<AristocratPageHeader
-			title="Tu Progreso en Aristocrat"
-			description="Así es como estás dominando nuevas habilidades con Aristocrat"
+			title="Metricas"
+			description="Así es como estás dominando nuevas habilidades"
 		/>
 
 		<section className="flex flex-wrap gap-4">

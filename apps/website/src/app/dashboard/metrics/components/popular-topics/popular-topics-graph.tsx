@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts';
 import {
 	type ChartConfig,
@@ -9,16 +7,26 @@ import {
 	ChartTooltip,
 } from '@/components/ui/chart';
 
+interface ChartDataPoint {
+	topic: string;
+	courses: number;
+}
+
+interface TooltipPayload {
+	value: number;
+	dataKey: string;
+	name: string;
+	payload: ChartDataPoint;
+	color: string;
+}
+
 interface CustomTooltipProps {
 	active?: boolean;
-	payload?: Array<{
-		value: number;
-		[key: string]: any;
-	}>;
+	payload?: TooltipPayload[];
 	label?: string;
 }
 
-const chartData = [
+const chartData: ChartDataPoint[] = [
 	{ topic: 'JavaScript', courses: 6 },
 	{ topic: 'React', courses: 3 },
 	{ topic: 'IA', courses: 3 },
@@ -36,18 +44,21 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
-	if (active && payload && payload.length) {
+	if (active && payload && payload.length > 0) {
+		const data = payload[0];
 		return (
 			<div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
-				<p className="text-muted-foreground">{`${label}`}</p>
-				<p className="font-medium text-primary">{`Cursos realizados: ${payload[0].value}`}</p>
+				<p className="text-muted-foreground">{label}</p>
+				<p className="font-medium text-primary">
+					Cursos realizados: {data.value}
+				</p>
 			</div>
 		);
 	}
 	return null;
 };
 
-const AristocratPopularTopicsGraph = () => {
+export const AristocratPopularTopicsGraph = () => {
 	return (
 		<ChartContainer
 			config={chartConfig}
@@ -77,5 +88,3 @@ const AristocratPopularTopicsGraph = () => {
 		</ChartContainer>
 	);
 };
-
-export default AristocratPopularTopicsGraph;

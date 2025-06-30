@@ -2,16 +2,19 @@ import {
 	RiBardLine,
 	RiBookLine,
 	RiBookMarkedLine,
+	RiCupLine,
 	RiEarthLine,
+	RiEyeCloseLine,
+	RiEyeLine,
+	RiFilmAiLine,
 	RiHome2Line,
 	RiLogoutBoxLine,
 	RiPieChartLine,
+	RiPlaneLine,
 	RiPlantLine,
 	RiRobot2Line,
 	RiSettings3Line,
 	RiUser2Line,
-	RiEyeLine,
-	RiEyeCloseLine,
 } from '@remixicon/react';
 
 export const AristocratIcons = {
@@ -28,4 +31,7 @@ export const AristocratIcons = {
 	Stars: RiBardLine,
 	Eye: RiEyeLine,
 	EyeClose: RiEyeCloseLine,
+	Film: RiFilmAiLine,
+	Cup: RiCupLine,
+	Plane: RiPlaneLine,
 };
