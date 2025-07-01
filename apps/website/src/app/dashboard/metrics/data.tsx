@@ -20,10 +20,11 @@ interface Topic {
 export const metricsData = [
 	{
 		id: 1,
-		className: 'flex-3 bg-sidebar text-white',
+		isPrimary: true,
 		icon: <AristocratIcons.Leaf />,
 		title: 'Tiempo Ahorrado Total',
-		value: '124h',
+		value: 124,
+		suffix: 'h',
 		subtitle: 'Equivale a 78 peliculas o 3120 canciones',
 		badge: (
 			<Badge className="badge badge-success rounded-md bg-sidebar-foreground/70 px-2 py-1 text-background text-sm">
@@ -33,9 +34,11 @@ export const metricsData = [
 	},
 	{
 		id: 2,
+		isPrimary: false,
 		icon: <AristocratIcons.Clock />,
 		title: 'Horas de Estudio',
-		value: '47h',
+		value: 47,
+		suffix: 'h',
 		subtitle: '+12h desde la ultima semana',
 		badge: (
 			<span className="badge badge-success">
@@ -45,6 +48,7 @@ export const metricsData = [
 	},
 	{
 		id: 3,
+		isPrimary: false,
 		icon: <AristocratIcons.StickyNote />,
 		title: 'Notas Creadas',
 		value: 89,
@@ -70,7 +74,8 @@ export const statsData = [
 	},
 	{
 		title: 'Puntuacion Promedio',
-		value: '87%',
+		value: 87,
+		prefix: '%',
 		icon: <AristocratIcons.Focus />,
 	},
 ];

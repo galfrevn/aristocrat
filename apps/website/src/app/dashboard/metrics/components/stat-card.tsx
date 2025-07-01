@@ -1,14 +1,16 @@
 import { motion } from 'motion/react';
 import type React from 'react';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import { Card } from '@/components/ui/card';
 
 interface Props {
 	icon: React.ReactNode;
 	title: string;
-	value: string | number;
+	value: number;
+	prefix?: string;
 }
 
-export const AristocratStatCard = ({ icon, title, value }: Props) => {
+export const AristocratStatCard = ({ icon, title, value, prefix }: Props) => {
 	const MotionCard = motion(Card);
 
 	return (
@@ -34,7 +36,13 @@ export const AristocratStatCard = ({ icon, title, value }: Props) => {
 			</div>
 			<div>
 				<h4 className="font-medium text-md text-muted-foreground">{title}</h4>
-				<p className="font-bold text-3xl text-foreground">{value}</p>
+				<div className="flex items-baseline gap-1">
+					<NumberTicker
+						value={value}
+						className="font-bold text-3xl text-foreground"
+					/>
+					{prefix && <p className="font-bold text-xl">{prefix}</p>}
+				</div>
 			</div>
 		</MotionCard>
 	);

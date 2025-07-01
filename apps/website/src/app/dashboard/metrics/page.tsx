@@ -18,25 +18,18 @@ const AristocratDashboardMetricsPage = () => (
 
 		<section className="flex flex-wrap gap-4">
 			{metricsData.map((metric) => (
-				<AristocratMetricCard
-					key={metric.id}
-					className={metric.className}
-					icon={metric.icon}
-					title={metric.title}
-					value={metric.value}
-					subtitle={metric.subtitle}
-					badge={metric.badge}
-				/>
+				<AristocratMetricCard key={metric.id} {...metric} />
 			))}
 		</section>
 
 		<section className="flex flex-wrap gap-4">
-			{statsData.map(({ title, value, icon }) => (
+			{statsData.map(({ title, value, icon, prefix }) => (
 				<AristocratStatCard
 					key={title}
 					title={title}
 					value={value}
 					icon={icon}
+					prefix={prefix}
 				/>
 			))}
 		</section>
