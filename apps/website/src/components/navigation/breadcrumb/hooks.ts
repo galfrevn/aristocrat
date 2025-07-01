@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation';
 const aristocratNavigationRouteToBreadcrumbLabel = {
 	dashboard: 'Dashboard',
 	courses: 'Cursos',
+	community: 'Comunidad',
 	settings: 'Configuración',
 	metrics: 'Metricas',
 };

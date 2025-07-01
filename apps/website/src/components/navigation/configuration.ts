@@ -68,7 +68,7 @@ export const navigationConfiguration: AristocratNavigationConfiguration = {
 			secondary: [
 				{
 					title: 'Comunidad',
-					url: '#',
+					url: '/dashboard/community',
 					icon: AristocratIcons.Community,
 				},
 				{

@@ -141,3 +141,27 @@ body {
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer utilities {
+	.aristocrat-main-content {
+		transition: border-radius 0.2s ease-in-out;
+		&:has(.aristocrat-content-area[data-overflow="true"]) {
+			@apply md:rounded-bl-none min-[1024px]:rounded-br-none;
+		}
+	}
+	
+	.aristocrat-page-wrapper {
+		transition: border-radius 0.2s ease-in-out;
+		&:has(.aristocrat-content-area[data-overflow="true"]) {
+			@apply md:rounded-bl-none min-[1024px]:rounded-br-none;
+		}
+	}
+	
+	.aristocrat-content-area {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+}
