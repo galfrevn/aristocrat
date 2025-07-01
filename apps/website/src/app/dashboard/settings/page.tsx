@@ -17,6 +17,7 @@ const AristocratDashboardSettingsPage = () => (
 			<AristocratDashboardSettingsSidebar />
 			<div className="flex-1 space-y-6">
 				<AristocratDashboardSettingsCards
+					id="profile"
 					form={<SettingsProfileForm />}
 					content={{
 						title: 'Mi Perfil',
@@ -26,6 +27,7 @@ const AristocratDashboardSettingsPage = () => (
 				/>
 
 				<AristocratDashboardSettingsCards
+					id="avatar"
 					form={<SettingsAvatarForm />}
 					content={{
 						title: 'Mi Avatar',
@@ -34,6 +36,7 @@ const AristocratDashboardSettingsPage = () => (
 				/>
 
 				<AristocratDashboardSettingsCards
+					id="security"
 					form={<SettingsPasswordForm />}
 					content={{
 						title: 'Seguridad',

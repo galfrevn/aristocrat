@@ -1,14 +1,9 @@
-import { protectedProcedure, publicProcedure, router } from '../lib/trpc';
+import { router } from '@/lib/trpc';
 
-export const appRouter = router({
-	healthCheck: publicProcedure.query(() => {
-		return 'OK';
-	}),
-	privateData: protectedProcedure.query(({ ctx }) => {
-		return {
-			message: 'This is private',
-			user: ctx.session.user,
-		};
-	}),
+import { aristocratCoursesRouter } from '@/routers/courses';
+
+export const aristocratApplicationRouter = router({
+	courses: aristocratCoursesRouter,
 });
-export type AppRouter = typeof appRouter;
+
+export type AristocratRouter = typeof aristocratApplicationRouter;

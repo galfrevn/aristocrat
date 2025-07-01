@@ -1,11 +1,14 @@
 import 'dotenv/config';
+
 import { trpcServer } from '@hono/trpc-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { auth } from './lib/auth';
-import { createContext } from './lib/context';
-import { appRouter } from './routers/index';
+
+import { auth } from '@/lib/auth';
+import { createContext } from '@/lib/context';
+
+import { aristocratApplicationRouter } from '@/routers/index';
 
 const app = new Hono();
 
@@ -25,7 +28,7 @@ app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw));
 app.use(
 	'/trpc/*',
 	trpcServer({
-		router: appRouter,
+		router: aristocratApplicationRouter,
 		createContext: (_opts, context) => {
 			return createContext({ context });
 		},

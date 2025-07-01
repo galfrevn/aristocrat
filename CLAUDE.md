@@ -21,12 +21,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run check` - Run Biome linter and formatter
 - `bun run check-types` - TypeScript type checking across all apps
 
+**Testing**
+- `bun run test` - Run Jest tests across all packages
+- `bun run test:watch` - Run tests in watch mode (transcripter app)
+- `bun run test:coverage` - Run tests with coverage reporting (transcripter app)
+
 ## Architecture Overview
 
 **Monorepo Structure**
 - `apps/server/` - Hono + tRPC API server with PostgreSQL/Drizzle ORM
 - `apps/website/` - Next.js 15 frontend with App Router, tRPC client
+- `apps/transcripter/` - Transcript processing microservice with Hono, SRT/VTT parsing, JWT auth
 - `apps/workers/` - Background job processing (Trigger.dev integration planned)
+- `packages/database/` - Shared database package with Drizzle ORM, schemas, and repositories
 
 **Key Technologies**
 - **Runtime**: Bun for package management and development
@@ -46,10 +53,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Starts all development servers
 
 **Database Setup**
-- PostgreSQL runs in Docker container with persistent volume
+- PostgreSQL runs in Docker container with persistent volume (`aristocrat_postgres_data`)
 - Connection: `postgres://postgres:mypassword@localhost:5432/postgres`
-- Schema files in `apps/server/src/db/schema/`
-- Migrations auto-generated with Drizzle Kit
+- Schema files in `packages/database/src/schema/` (shared package)
+- Database package exports: schema, repository functions, and utilities
+- Migrations auto-generated with Drizzle Kit in database package
 
 **File Upload**
 - Uses UploadThing for file management
@@ -72,5 +80,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Nursery rule `useUniqueElementIds` disabled for React components
 
 **Environment Variables**
-- Server: `.env` file in `apps/server/` with `DATABASE_URL`, `BETTER_AUTH_SECRET`, `CORS_ORIGIN`
+- Server: `.env` file in `apps/server/` with `DATABASE_URL`, `BETTER_AUTH_SECRET`, `CORS_ORIGIN`, `BETTER_AUTH_URL`
 - Website: Next.js environment variables for `NEXT_PUBLIC_SERVER_URL`, `UPLOADTHING_TOKEN`
+- Database: `.env` file in `packages/database/` with `DATABASE_URL` (auto-created by dev script)
+- Transcripter: Uses JWT tokens for authentication, no specific env file required
+
+**Package Management**
+- Uses Bun workspaces with shared TypeScript configuration (`@aristocrat/typescript`)
+- Database package (`@aristocrat/database`) provides shared schema and utilities
+- Each app can import from workspace packages using `workspace:*` protocol
+
+**Testing Architecture**
+- Jest configuration in root and individual packages
+- Transcripter app has comprehensive test coverage for error handling, services, and utilities
+- Database package includes repository and utility tests
