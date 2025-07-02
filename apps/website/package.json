@@ -47,6 +47,7 @@
 		"zod": "^3.25.16"
 	},
 	"devDependencies": {
+		"@aristocrat/server": "workspace:*",
 		"@aristocrat/typescript": "workspace:*",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20",

@@ -7,7 +7,7 @@
 	],
 	"license": "MIT",
 	"scripts": {
-		"check": "biome check",
+		"check": "biome check .",
 		"prepare": "husky",
 		"dev": "bun scripts/dev.ts",
 		"dev:turbo": "turbo dev",
