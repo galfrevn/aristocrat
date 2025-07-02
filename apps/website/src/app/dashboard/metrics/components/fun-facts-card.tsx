@@ -1,38 +1,6 @@
 import type React from 'react';
-import { AristocratIcons } from '@/components/icons';
 import { Card } from '@/components/ui/card';
-
-interface Fact {
-	id: number;
-	icon: React.ReactNode;
-	title: string;
-	subtitle: string;
-	ariaLabel: string;
-}
-
-const facts: Fact[] = [
-	{
-		id: 1,
-		icon: <AristocratIcons.Film />,
-		title: 'Has ahorrado el tiempo de',
-		subtitle: '78 películas completas',
-		ariaLabel: 'Tiempo ahorrado equivalente a 78 películas completas',
-	},
-	{
-		id: 2,
-		icon: <AristocratIcons.Cup />,
-		title: 'Tiempo suficiente para',
-		subtitle: '240 tazas de café',
-		ariaLabel: 'Tiempo ahorrado equivalente a 240 tazas de café',
-	},
-	{
-		id: 3,
-		icon: <AristocratIcons.Plane />,
-		title: 'Podrías haber volado',
-		subtitle: '15 veces de Madrid a Nueva York',
-		ariaLabel: 'Tiempo ahorrado equivalente a 15 vuelos de Madrid a Nueva York',
-	},
-];
+import { factsData } from '../data';
 
 export const AristocratFunFactsCard = () => {
 	return (
@@ -47,7 +15,7 @@ export const AristocratFunFactsCard = () => {
 				className="flex h-full list-none flex-col justify-between gap-1"
 				aria-label="Lista de datos curiosos sobre tiempo ahorrado"
 			>
-				{facts.map((fact: Fact) => {
+				{factsData.map((fact) => {
 					return (
 						<li
 							key={`fun-fact-${fact.id}`}

@@ -1,13 +1,16 @@
+import { motion } from 'motion/react';
 import type React from 'react';
+import { NumberTicker } from '@/components/magicui/number-ticker';
 import { Card } from '@/components/ui/card';
 
 interface MetricCardProps {
 	icon: React.ReactNode;
 	title: string;
-	value: string | number;
+	value: number;
+	suffix?: string;
 	subtitle?: string;
 	badge?: React.ReactNode;
-	className?: string;
+	isPrimary?: boolean;
 }
 
 export const AristocratMetricCard: React.FC<MetricCardProps> = ({
@@ -15,15 +18,32 @@ export const AristocratMetricCard: React.FC<MetricCardProps> = ({
 	title,
 	value,
 	subtitle,
+	suffix,
 	badge,
-	className = 'flex-2 bg-muted',
+	isPrimary = false,
 }) => {
 	const cardId = `metric-card-${title.toLowerCase().replace(/\s+/g, '-')}`;
 
+	const MotionCard = motion(Card);
+
 	return (
-		<Card
+		<MotionCard
+			initial={{
+				opacity: 0,
+				y: 50,
+			}}
+			animate={{
+				opacity: 1,
+				y: 0,
+			}}
+			transition={{
+				type: 'spring',
+				duration: 1,
+			}}
 			id={cardId}
-			className={`w-auto ${className} border-none shadow-none`}
+			className={`w-auto border-none shadow-none ${
+				isPrimary ? 'flex-3 bg-sidebar text-white' : 'flex-2 bg-muted'
+			}`}
 			aria-labelledby={`${cardId}-title`}
 			aria-describedby={subtitle ? `${cardId}-subtitle` : undefined}
 		>
@@ -49,9 +69,17 @@ export const AristocratMetricCard: React.FC<MetricCardProps> = ({
 					>
 						{title}
 					</h3>
-					<p className="font-bold text-4xl leading-none tracking-tight">
-						{value}
-					</p>
+
+					<div className="flex items-baseline gap-2">
+						<NumberTicker
+							value={value}
+							className={`inline font-bold text-4xl leading-none tracking-tight ${
+								isPrimary ? 'text-secondary' : 'text-primary'
+							}`}
+						/>
+						{suffix && <p className="font-bold text-2xl">{suffix}</p>}
+					</div>
+
 					{subtitle && (
 						<p
 							id={`${cardId}-subtitle`}
@@ -62,6 +90,6 @@ export const AristocratMetricCard: React.FC<MetricCardProps> = ({
 					)}
 				</section>
 			</div>
-		</Card>
+		</MotionCard>
 	);
 };
