@@ -1,15 +1,9 @@
 'use client';
 
+import { RiLoader2Line, RiSearchLine } from '@remixicon/react';
 import { useEffect, useId, useState } from 'react';
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-import {
-	RiArrowRightLongLine,
-	RiLoader2Line,
-	RiSearchLine,
-} from '@remixicon/react';
 import { cn } from '@/lib/utils';
 
 export function SearchInput({
@@ -36,7 +30,7 @@ export function SearchInput({
 	}, [inputValue]);
 
 	return (
-		<div className={cn("*:not-first:mt-2", className)}>
+		<div className={cn('*:not-first:mt-2', className)}>
 			{label && <Label htmlFor={id}>{label}</Label>}
 			<div className="relative">
 				<Input
