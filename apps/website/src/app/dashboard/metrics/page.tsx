@@ -12,7 +12,7 @@ import { metricsData, statsData } from './data';
 const AristocratDashboardMetricsPage = () => (
 	<AristocratPageWrapper>
 		<AristocratPageHeader
-			title="Metricas"
+			title="Métricas"
 			description="Así es como estás dominando nuevas habilidades"
 		/>
 
