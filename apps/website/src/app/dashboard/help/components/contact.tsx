@@ -1,10 +1,11 @@
 'use client';
 
+import type { RemixiconComponentType } from '@remixicon/react';
 import { AristocratIcons } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface AristocratContactMethod {
-	icon: React.ComponentType<React.ComponentProps<'svg'>>;
+	icon: RemixiconComponentType;
 	title: string;
 	value: string;
 	subtitle: string;
