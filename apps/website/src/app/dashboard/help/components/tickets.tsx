@@ -176,7 +176,8 @@ export function AristocratSupportTickets({
 	supportTickets = aristocratSampleSupportTickets,
 }: AristocratSupportTicketsProps) {
 	const activeSupportTickets = supportTickets.filter(
-		(supportTicket) => supportTicket.status !== 'closed',
+		(supportTicket) =>
+			supportTicket.status === 'open' || supportTicket.status === 'in-progress',
 	);
 	const historySupportTickets = supportTickets.filter(
 		(supportTicket) =>
