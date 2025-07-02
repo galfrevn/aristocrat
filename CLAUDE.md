@@ -26,6 +26,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run test:watch` - Run tests in watch mode (transcripter app)
 - `bun run test:coverage` - Run tests with coverage reporting (transcripter app)
 
+## Quick Tips
+- Do not use `biome check --write .` as it can cause unintended changes across the entire monorepo
+
 ## Architecture Overview
 
 **Monorepo Structure**
