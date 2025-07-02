@@ -1,0 +1,24 @@
+import type React from 'react';
+import { Card } from '@/components/ui/card';
+
+interface Props {
+	icon: React.ReactNode;
+	title: string;
+	value: string | number;
+}
+
+export const AristocratStatCard = ({ icon, title, value }: Props) => {
+	return (
+		<Card className="flex h-auto w-auto flex-1 flex-row items-center gap-4 bg-gradient-to-br from-card to-card/80 p-4 shadow-none">
+			<div className="flex size-12 items-center justify-center rounded-lg bg-muted text-primary">
+				<span aria-label="Icono de la métrica" role="img">
+					{icon}
+				</span>
+			</div>
+			<div>
+				<h4 className="font-medium text-md text-muted-foreground">{title}</h4>
+				<p className="font-bold text-3xl text-foreground">{value}</p>
+			</div>
+		</Card>
+	);
+};

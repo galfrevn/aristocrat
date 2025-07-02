@@ -5,6 +5,7 @@ const aristocratNavigationRouteToBreadcrumbLabel = {
 	courses: 'Cursos',
 	community: 'Comunidad',
 	settings: 'Configuración',
+	metrics: 'Métricas',
 };
 
 type AristocratNavigationRoute =

@@ -56,7 +56,7 @@ export const navigationConfiguration: AristocratNavigationConfiguration = {
 				},
 				{
 					title: 'Métricas',
-					url: '#',
+					url: '/dashboard/metrics',
 					icon: AristocratIcons.Metrics,
 				},
 				{
