@@ -41,7 +41,7 @@ export function AristocratHelpCards() {
 						<CardContent className="p-4">
 							<div className="flex flex-col items-center space-y-3 text-center">
 								<div className={cn('rounded-xl p-3', card.iconColor)}>
-									<card.icon className="size-6" />
+									<card.icon className="h-6 w-6" />
 								</div>
 								<div className="flex flex-col items-center gap-0.5">
 									<h3 className="font-semibold leading-tight">{card.title}</h3>
