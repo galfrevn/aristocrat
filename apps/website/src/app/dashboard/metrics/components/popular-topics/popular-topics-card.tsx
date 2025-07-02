@@ -33,7 +33,7 @@ export const AristocratPopularTopicsCard = () => {
 	return (
 		<Card className="w-auto flex-2 justify-start px-4 py-4 shadow-none sm:px-6 sm:py-4">
 			<h2 id="skills-dominance-title" className="font-semibold text-xl">
-				Habilidadaes
+				Habilidades
 			</h2>
 
 			<main className="flex gap-2">
