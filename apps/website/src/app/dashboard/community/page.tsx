@@ -1,18 +1,26 @@
 import { AristocratCommunityActions } from '@/app/dashboard/community/components/actions';
 import { AristocratCommunityGrid } from '@/app/dashboard/community/components/grid';
-import { AristocratCommunitySearch } from '@/app/dashboard/community/components/search';
 import { AristocratPageHeader } from '@/app/dashboard/components/header';
 import { AristocratPageWrapper } from '@/app/dashboard/components/wrapper';
 
+import { AristocratCommunityFeed } from './components/feed';
+import { AristocratCommunityGroups } from './components/groups';
+import { AristocratCommunityStats } from './components/stats';
+
 const AristocratDashboardCommunityPage = () => (
-	<AristocratPageWrapper action={<AristocratCommunityActions />}>
+	<AristocratPageWrapper>
 		<AristocratPageHeader
 			title="Comunidad"
-			description="Conecta con otros educadores y comparte experiencias de aprendizaje."
+			description="Conecta con otros estudiantes y comparte experiencias de aprendizaje."
 		/>
 
-		<AristocratCommunitySearch />
-		<AristocratCommunityGrid />
+		<AristocratCommunityActions />
+
+		<AristocratCommunityGrid>
+			<AristocratCommunityFeed />
+			<AristocratCommunityGroups />
+			<AristocratCommunityStats />
+		</AristocratCommunityGrid>
 	</AristocratPageWrapper>
 );
 
