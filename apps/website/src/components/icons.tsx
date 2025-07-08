@@ -7,6 +7,7 @@ import {
 	RiBookLine,
 	RiBookMarkedLine,
 	RiBookOpenLine,
+	RiCalendarLine,
 	RiChat1Line,
 	RiChat3Line,
 	RiCheckboxCircleLine,
@@ -20,6 +21,7 @@ import {
 	RiFilmAiLine,
 	RiFlagLine,
 	RiFocus2Line,
+	RiGroupLine,
 	RiHeart3Line,
 	RiHome2Line,
 	RiLeafLine,
@@ -85,4 +87,6 @@ export const AristocratIcons = {
 	HeartLIke: RiHeart3Line,
 	Share: RiShareLine,
 	Flag: RiFlagLine,
+	PersonGroups: RiGroupLine,
+	Calendar: RiCalendarLine,
 };
