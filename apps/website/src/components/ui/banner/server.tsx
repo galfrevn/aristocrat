@@ -1,31 +1,13 @@
 import { cookies } from 'next/headers';
 
 import { AristocratNotificationsBannerClient } from '@/components/ui/banner/client';
+import {
+	fetchEnabledBanners,
+	getDismissedBannerIds,
+} from '@/components/ui/banner/utils';
 
 interface AristocratNotificationsBannerProps {
 	id: string;
-}
-
-// # TODO: Implement real TRPC
-async function fetchEnabledBanners() {
-	const response = await fetch(
-		`${process.env.NEXT_PUBLIC_SERVER_URL}/trpc/banners.$get.enabled`,
-		{ credentials: 'include' },
-	);
-
-	if (!response.ok) {
-		throw new Error('Failed to fetch banners');
-	}
-
-	const data = await response.json();
-	return data.result?.data || [];
-}
-
-function getDismissedBannerIds(
-	cookieStore: Awaited<ReturnType<typeof cookies>>,
-): string[] {
-	const dismissedCookie = cookieStore.get('dismissedBanners');
-	return dismissedCookie ? JSON.parse(dismissedCookie.value) : [];
 }
 
 export async function AristocratNotificationsBanner() {
