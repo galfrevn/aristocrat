@@ -1,0 +1,121 @@
+export const groups = [
+	{
+		id: 1,
+		title: 'Desarrollo Web en Español',
+		category: 'Desarrollo Web',
+		description:
+			'Grupo para practicar y discutir sobre desarrollo web frontend y backend en español.',
+		schedule: 'Martes y Jueves 19:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/12',
+			'https://avatar.iran.liara.run/public/29',
+			'https://avatar.iran.liara.run/public/28',
+			'https://avatar.iran.liara.run/public/27',
+		],
+		max_members: 50,
+		actual_members: 45,
+		isJoined: false,
+	},
+	{
+		id: 2,
+		title: 'Machine Learning para Principiantes',
+		category: 'Inteligencia Artificial',
+		description:
+			'Un grupo para quienes desean iniciarse en el mundo del Machine Learning y compartir recursos y dudas.',
+		schedule: 'Miércoles 18:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/21',
+			'https://avatar.iran.liara.run/public/22',
+			'https://avatar.iran.liara.run/public/23',
+			'https://avatar.iran.liara.run/public/24',
+		],
+		max_members: 40,
+		actual_members: 32,
+		isJoined: true,
+	},
+	{
+		id: 3,
+		title: 'React y Frontend Moderno',
+		category: 'Frontend',
+		description:
+			'Espacio para aprender y debatir sobre React, frameworks modernos y mejores prácticas de frontend.',
+		schedule: 'Lunes 20:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/31',
+			'https://avatar.iran.liara.run/public/32',
+			'https://avatar.iran.liara.run/public/33',
+			'https://avatar.iran.liara.run/public/34',
+		],
+		max_members: 35,
+		actual_members: 28,
+		isJoined: false,
+	},
+	{
+		id: 4,
+		title: 'Python para Todos',
+		category: 'Programación',
+		description:
+			'Comunidad para practicar Python desde cero, resolver ejercicios y compartir proyectos.',
+		schedule: 'Viernes 17:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/41',
+			'https://avatar.iran.liara.run/public/42',
+			'https://avatar.iran.liara.run/public/43',
+			'https://avatar.iran.liara.run/public/44',
+		],
+		max_members: 60,
+		actual_members: 54,
+		isJoined: false,
+	},
+	{
+		id: 5,
+		title: 'Educadores Digitales',
+		category: 'Educación',
+		description:
+			'Grupo para docentes interesados en la integración de tecnología y recursos digitales en el aula.',
+		schedule: 'Sábados 11:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/51',
+			'https://avatar.iran.liara.run/public/52',
+			'https://avatar.iran.liara.run/public/53',
+			'https://avatar.iran.liara.run/public/54',
+		],
+		max_members: 25,
+		actual_members: 19,
+		isJoined: false,
+	},
+	{
+		id: 6,
+		title: 'Ciberseguridad Básica',
+		category: 'Ciberseguridad',
+		description:
+			'Aprende los fundamentos de la ciberseguridad y comparte consejos para proteger tus proyectos.',
+		schedule: 'Jueves 21:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/61',
+			'https://avatar.iran.liara.run/public/62',
+			'https://avatar.iran.liara.run/public/63',
+			'https://avatar.iran.liara.run/public/64',
+		],
+		max_members: 30,
+		actual_members: 22,
+		isJoined: false,
+	},
+	{
+		id: 7,
+		title: 'Data Science en Español',
+		category: 'Ciencia de Datos',
+		description:
+			'Grupo para explorar temas de análisis de datos, visualización y herramientas de data science.',
+		schedule: 'Domingos 16:00 CET',
+		members: [
+			'https://avatar.iran.liara.run/public/71',
+			'https://avatar.iran.liara.run/public/72',
+			'https://avatar.iran.liara.run/public/73',
+			'https://avatar.iran.liara.run/public/74',
+		],
+		max_members: 40,
+		actual_members: 36,
+		isJoined: false,
+	},
+];
