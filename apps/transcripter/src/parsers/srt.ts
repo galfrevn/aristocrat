@@ -7,6 +7,9 @@ export function parseSRTSubtitles(srtContent: string): TranscriptSegment[] {
 		.split('\n\n')
 		.filter((block) => block.trim());
 
+	// Pre-compile regex for better performance
+	const htmlTagRegex = /<[^>]*>/g;
+
 	for (const subtitleBlock of subtitleBlocks) {
 		const blockLines = subtitleBlock.split('\n');
 		if (blockLines.length >= 3) {
@@ -17,10 +20,17 @@ export function parseSRTSubtitles(srtContent: string): TranscriptSegment[] {
 					.map((timeString) => timeString.trim());
 				const startTimeInSeconds = convertSRTTimeToSeconds(segmentStartTime);
 
-				const subtitleText = blockLines
-					.slice(2)
-					.join(' ')
-					.replace(/<[^>]*>/g, '');
+				// More efficient string building without intermediate arrays
+				let subtitleText = '';
+				for (let i = 2; i < blockLines.length; i++) {
+					if (i > 2) subtitleText += ' ';
+					subtitleText += blockLines[i];
+				}
+
+				// Only apply regex if HTML tags are detected
+				if (subtitleText.includes('<')) {
+					subtitleText = subtitleText.replace(htmlTagRegex, '');
+				}
 
 				transcriptSegments.push({
 					text: subtitleText,

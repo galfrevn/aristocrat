@@ -42,7 +42,7 @@ export function AuthenticationLoginForm() {
 			await authenticationClientside.signIn.email(generateLoginPayload(value), {
 				onSuccess: () => {
 					router.push('/dashboard');
-					toast.success('Sign up successful');
+					toast.success('Sign in successful');
 				},
 				onError: (error) => {
 					toast.error(error.error.message);
