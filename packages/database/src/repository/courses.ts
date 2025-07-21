@@ -1,5 +1,5 @@
 import type { AristocratDatabase } from '@/index';
-import { courses, type InserCourse } from '@/schema/courses';
+import { courses, type InsertCourse } from '@/schema/courses';
 import { equals } from '@/utils/query';
 
 export class CoursesRepository {
@@ -32,7 +32,7 @@ export class CoursesRepository {
 		});
 	}
 
-	async insert(input: InserCourse) {
+	async insert(input: InsertCourse) {
 		const [course] = await this.database
 			.insert(courses)
 			.values(input)
@@ -41,7 +41,7 @@ export class CoursesRepository {
 		return course;
 	}
 
-	async update(courseId: string, input: Partial<InserCourse>) {
+	async update(courseId: string, input: Partial<InsertCourse>) {
 		const [course] = await this.database
 			.update(courses)
 			.set(input)

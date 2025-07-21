@@ -110,9 +110,6 @@
         "typescript": "^5",
       },
     },
-    "apps/workers": {
-      "name": "@aristocrat/workers",
-    },
     "packages/ai": {
       "name": "@aristocrat/ai",
       "version": "0.1.0",
@@ -191,8 +188,6 @@
     "@aristocrat/typescript": ["@aristocrat/typescript@workspace:packages/typescript"],
 
     "@aristocrat/website": ["@aristocrat/website@workspace:apps/website"],
-
-    "@aristocrat/workers": ["@aristocrat/workers@workspace:apps/workers"],
 
     "@babel/code-frame": ["@babel/code-frame@7.27.1", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.27.1", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg=="],
 
