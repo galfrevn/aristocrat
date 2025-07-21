@@ -54,4 +54,4 @@ export const courses = table(
 
 export const tables = ['courses'] as const;
 export type Course = typeof courses.$inferSelect;
-export type InserCourse = typeof courses.$inferInsert;
+export type InsertCourse = typeof courses.$inferInsert;
