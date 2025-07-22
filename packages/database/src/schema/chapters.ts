@@ -1,3 +1,4 @@
+import { createSelectSchema } from 'drizzle-zod';
 import { courses } from '@/schema/courses';
 import { index, integer, table, text, timestamp, uuid } from '@/utils/pg';
 
@@ -39,3 +40,5 @@ export const chapters = table(
 export const tables = ['chapters'] as const;
 export type Chapter = typeof chapters.$inferSelect;
 export type InsertChapter = typeof chapters.$inferInsert;
+
+export const chapterSchema = createSelectSchema(chapters);

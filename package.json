@@ -9,6 +9,7 @@
 	"scripts": {
 		"check": "biome check .",
 		"prepare": "husky",
+		"kill:ports": "bun scripts/ports.ts",
 		"dev": "bun scripts/dev.ts",
 		"dev:turbo": "turbo dev",
 		"build": "turbo build",

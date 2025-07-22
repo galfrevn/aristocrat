@@ -1,3 +1,4 @@
+import { createSelectSchema } from 'drizzle-zod';
 import { chapters } from '@/schema/chapters';
 import {
 	index,
@@ -58,3 +59,5 @@ export const lessons = table(
 export const tables = ['lessons'] as const;
 export type Lesson = typeof lessons.$inferSelect;
 export type InsertLesson = typeof lessons.$inferInsert;
+
+export const lessonSchema = createSelectSchema(lessons);

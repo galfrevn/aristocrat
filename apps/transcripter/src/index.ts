@@ -20,6 +20,6 @@ app.use(
 app.route('/', aristocratTranscripterCoreRouter);
 
 export default {
-	port: process.env.PORT,
+	port: process.env.PORT || 3002,
 	fetch: app.fetch,
 };
