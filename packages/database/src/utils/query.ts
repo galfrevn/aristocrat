@@ -1,1 +1,1 @@
-export { eq as equals } from 'drizzle-orm';
+export { and, eq as equals, ilike } from 'drizzle-orm';

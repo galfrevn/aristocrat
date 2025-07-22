@@ -2,6 +2,7 @@ import type { UsefulTranscriptInformation } from '@/ai/types';
 
 export const GENERATE_CHAPTERS_FROM_TRANSCRIPT_PROMPT = (
 	t: UsefulTranscriptInformation,
+	language: string,
 ) => `
   You are an expert course creator. 
   Your job is to analyze the following video transcript and generate a list of chapters that best organize the content into logical sections. 
@@ -30,6 +31,8 @@ export const GENERATE_CHAPTERS_FROM_TRANSCRIPT_PROMPT = (
       - Lesson Description: A brief description of what the lesson covers.
       - Lesson Start Time: The start time of the lesson in the transcript.
       - Lesson End Time: The end time of the lesson in the transcript.
+  
+  The target language is ${language}. All generated content must be in this language.
 
   Important:
   - Use the offset and duration fields in the transcript data to determine the exact start and end times for each lesson. 

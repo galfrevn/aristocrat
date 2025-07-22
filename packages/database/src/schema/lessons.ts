@@ -1,3 +1,5 @@
+import { relations, sql } from 'drizzle-orm';
+import { jsonb } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { chapters } from '@/schema/chapters';
 import {
@@ -32,8 +34,19 @@ export const lessons = table(
 		title: text('title').notNull(),
 		description: text('description'),
 		content: text('content'),
-		videoUrl: text('video_url'),
-		thumbnail: text('thumbnail'),
+
+		// # Key Concepts for AI Research
+		keyConcepts: jsonb('key_concepts')
+			.$type<
+				Array<{
+					title: string;
+					searchParams: string;
+					researchedContent?: string;
+					references?: string[];
+				}>
+			>()
+			.default([])
+			.notNull(),
 
 		// # Time (Important to match content with the actual video)
 		startTime: text('start_time'),
@@ -65,3 +78,10 @@ export type Lesson = typeof lessons.$inferSelect;
 export type InsertLesson = typeof lessons.$inferInsert;
 
 export const lessonSchema = createSelectSchema(lessons);
+
+export const lessonRelations = relations(lessons, ({ one }) => ({
+	chapter: one(chapters, {
+		fields: [lessons.chapterId],
+		references: [chapters.id],
+	}),
+}));

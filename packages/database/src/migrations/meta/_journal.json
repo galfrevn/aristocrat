@@ -8,6 +8,13 @@
 			"when": 1750563430638,
 			"tag": "0000_faithful_stepford_cuckoos",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1753157976400,
+			"tag": "0001_certain_puppet_master",
+			"breakpoints": true
 		}
 	]
 }

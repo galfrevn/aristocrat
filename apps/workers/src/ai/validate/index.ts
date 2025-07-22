@@ -8,7 +8,7 @@ import {
 	VALIDATE_TRANSCRIPT_PROMPT,
 } from '@/ai/validate/prompt';
 
-import type { TranscriptResponse } from '@/services/transcripter';
+import type { TranscriptResponse } from '@/tools/transcripter';
 
 const validateTranscriptFnSchema = z.object({
 	valid: z.boolean(),

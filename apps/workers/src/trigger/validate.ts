@@ -3,8 +3,8 @@ import {
 	explainInvalidTranscriptFn,
 	validateTranscriptFn,
 } from '@/ai/validate';
-import type { TranscriptResponse } from '@/services/transcripter';
 import { STEP, VALIDATING_TRANSCRIPT } from '@/tools/steps';
+import type { TranscriptResponse } from '@/tools/transcripter';
 
 export const COURSE_VALIDATION_JOB_MAX_DURATION = 300;
 export const COURSE_VALIDATION_JOB_ID = 'course:validation';
@@ -56,6 +56,9 @@ export const courseValidationJob = task({
 			usage: explainInvalidTranscriptFnUsage,
 		});
 
-		return explainInvalidTranscriptFnResponse;
+		return {
+			...explainInvalidTranscriptFnResponse,
+			valid: false,
+		};
 	},
 });

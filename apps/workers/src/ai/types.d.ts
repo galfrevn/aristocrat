@@ -1,3 +1,3 @@
-import type { TranscriptResponse } from '@/services/transcripter';
+import type { TranscriptResponse } from '@/tools/transcripter';
 
 export type UsefulTranscriptInformation = TranscriptResponse['transcript'];
