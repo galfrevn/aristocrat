@@ -1,20 +1,25 @@
-// Schema exports
-
 export type { Assessment, InsertAssessment } from './assessments';
 export { assessments } from './assessments';
+
 export { account, session, user, verification } from './auth';
+
 export { banners } from './banners';
+
 export type { Chapter, InsertChapter } from './chapters';
-export { chapters } from './chapters';
-// Type exports
+export { chapterRelations, chapterSchema, chapters } from './chapters';
+
 export type { Course, InsertCourse } from './courses';
-export { courses } from './courses';
+export { courseRelations, courses } from './courses';
+
 export type { Exercise, InsertExercise } from './exercises';
 export { exercises } from './exercises';
+
 export type { InsertLesson, Lesson } from './lessons';
-export { lessons } from './lessons';
+export { lessonRelations, lessonSchema, lessons } from './lessons';
+
 export type { InsertNote, Note } from './notes';
 export { notes } from './notes';
+
 export type {
 	AssessmentResponse,
 	ChapterProgress,
@@ -27,6 +32,7 @@ export type {
 	InsertLessonProgress,
 	LessonProgress,
 } from './progress';
+
 export {
 	assessmentResponses,
 	chapterProgress,

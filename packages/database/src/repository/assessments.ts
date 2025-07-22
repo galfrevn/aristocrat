@@ -53,6 +53,15 @@ export class AssessmentsRepository {
 		return assessment;
 	}
 
+	async insertMany(input: InsertAssessment[]) {
+		const response = await this.database
+			.insert(assessments)
+			.values(input)
+			.returning();
+
+		return response;
+	}
+
 	async update(assessmentId: string, input: Partial<InsertAssessment>) {
 		const [assessment] = await this.database
 			.update(assessments)

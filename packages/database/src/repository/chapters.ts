@@ -35,6 +35,15 @@ export class ChaptersRepository {
 		return chapter;
 	}
 
+	async insertMany(input: InsertChapter[]) {
+		const response = await this.database
+			.insert(chapters)
+			.values(input)
+			.returning();
+
+		return response;
+	}
+
 	async update(chapterId: string, input: Partial<InsertChapter>) {
 		const [chapter] = await this.database
 			.update(chapters)

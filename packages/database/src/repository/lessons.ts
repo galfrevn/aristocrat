@@ -41,6 +41,15 @@ export class LessonsRepository {
 		return lesson;
 	}
 
+	async insertMany(input: InsertLesson[]) {
+		const response = await this.database
+			.insert(lessons)
+			.values(input)
+			.returning();
+
+		return response;
+	}
+
 	async update(lessonId: string, input: Partial<InsertLesson>) {
 		const [lesson] = await this.database
 			.update(lessons)

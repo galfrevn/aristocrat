@@ -3,7 +3,6 @@
 	"references": [
 		{ "path": "apps/server" },
 		{ "path": "apps/website" },
-		{ "path": "packages/ai" },
 		{ "path": "packages/database" }
 	]
 }

@@ -1,5 +1,8 @@
+import { relations } from 'drizzle-orm';
+import { createSelectSchema } from 'drizzle-zod';
 import { courses } from '@/schema/courses';
 import { index, integer, table, text, timestamp, uuid } from '@/utils/pg';
+import { lessons } from './lessons';
 
 export const CHAPTER_ID_IDX = 'chapters_id_idx';
 export const CHAPTER_COURSE_ID_IDX = 'chapters_course_id_idx';
@@ -14,7 +17,6 @@ export const chapters = table(
 		// # Content
 		title: text('title').notNull(),
 		description: text('description'),
-		thumbnail: text('thumbnail'),
 
 		// # Organization
 		order: integer('order').notNull(),
@@ -39,3 +41,13 @@ export const chapters = table(
 export const tables = ['chapters'] as const;
 export type Chapter = typeof chapters.$inferSelect;
 export type InsertChapter = typeof chapters.$inferInsert;
+
+export const chapterSchema = createSelectSchema(chapters);
+
+export const chapterRelations = relations(chapters, ({ many, one }) => ({
+	lessons: many(lessons),
+	course: one(courses, {
+		fields: [chapters.courseId],
+		references: [courses.id],
+	}),
+}));

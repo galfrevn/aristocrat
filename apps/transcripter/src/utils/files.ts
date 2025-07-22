@@ -15,7 +15,7 @@ export async function downloadSubtitles(
 ): Promise<string[]> {
 	try {
 		return await withRetry(async () => {
-			const process = $`cd ${tempDir} && yt-dlp --write-auto-sub --write-sub --sub-langs "${language},en,es-419,es-ES" --skip-download --output "%(id)s.%(ext)s" "https://youtube.com/watch?v=${videoId}"`;
+			const process = $`cd ${tempDir} && yt-dlp --write-auto-sub --write-sub --sub-langs "${language}" --skip-download --output "%(id)s.%(ext)s" "https://youtube.com/watch?v=${videoId}"`;
 
 			const result = await process;
 

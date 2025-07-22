@@ -1,6 +1,15 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { user } from '@/schema/auth';
-import { index, integer, oneof, table, text, uuid } from '@/utils/pg';
+import {
+	index,
+	integer,
+	oneof,
+	table,
+	text,
+	timestamp,
+	uuid,
+} from '@/utils/pg';
+import { chapters } from './chapters';
 
 export const COURSE_DIFFICULTY_NAME = 'difficulty';
 export const difficulty = oneof(COURSE_DIFFICULTY_NAME, [
@@ -23,7 +32,7 @@ export const courses = table(
 
 		// # Processing
 		youtubeVideoId: text('youtube_video_id').notNull(),
-		generationProcessId: uuid('generation_process_id').unique().notNull(),
+		generationProcessId: text('generation_process_id'),
 
 		// # Metadata
 		title: text('title').notNull(),
@@ -43,6 +52,10 @@ export const courses = table(
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
+
+		// # Timestamps
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at').defaultNow().notNull(),
 	},
 	(table) => [
 		index(COURSE_ID_IDX).on(table.id),
@@ -55,3 +68,8 @@ export const courses = table(
 export const tables = ['courses'] as const;
 export type Course = typeof courses.$inferSelect;
 export type InsertCourse = typeof courses.$inferInsert;
+
+export const courseRelations = relations(courses, ({ many, one }) => ({
+	chapters: many(chapters),
+	user: one(user, { fields: [courses.userId], references: [user.id] }),
+}));

@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"@aristocrat/database": "workspace:*",
+		"@trigger.dev/sdk": "^3.3.0",
 		"dotenv": "^16.4.7",
 		"zod": "^3.25.16",
 		"@trpc/server": "^11.0.0",
