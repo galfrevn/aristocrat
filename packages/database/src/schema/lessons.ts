@@ -35,6 +35,10 @@ export const lessons = table(
 		videoUrl: text('video_url'),
 		thumbnail: text('thumbnail'),
 
+		// # Time (Important to match content with the actual video)
+		startTime: text('start_time'),
+		endTime: text('end_time'),
+
 		// # Organization
 		type: lessonType().notNull(),
 		order: integer('order').notNull(),

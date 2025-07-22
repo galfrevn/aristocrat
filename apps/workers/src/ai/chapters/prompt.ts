@@ -24,9 +24,10 @@ export const GENERATE_CHAPTERS_FROM_TRANSCRIPT_PROMPT = (
 
   - For each chapter, provide:
     - Title: A concise and descriptive chapter title.
-    - Summary: A short paragraph summarizing the main ideas, key points, or skills covered in the chapter.
+    - Description: A short paragraph summarizing the main ideas, key points, or skills covered in the chapter.
     - Lessons: A list of lesson titles and times that are covered in this chapter. Each lesson should be a specific topic or skill that is taught within the chapter. Chapters can have one or more lessons. Prefer fewer, broader lessons over many small ones. Tipically, a chapter should have around 1–3 lessons, but use your judgment based on the content.
       - Lesson Title: A concise and descriptive title for the lesson.
+      - Lesson Description: A brief description of what the lesson covers.
       - Lesson Start Time: The start time of the lesson in the transcript.
       - Lesson End Time: The end time of the lesson in the transcript.
 
@@ -44,13 +45,12 @@ export const GENERATE_CHAPTERS_FROM_TRANSCRIPT_PROMPT = (
     "chapters": [
       {
         "title": "string",
-        "summary": "string",
-        "startTime": "string",
-        "endTime": "string",
+        "description": "string",
         "lessons": [
           {        
-            "title": "string"
-            "startTime": "string"
+            "title": "string",
+            "description": "string",
+            "startTime": "string",
             "endTime": "string"
           }
         ]
