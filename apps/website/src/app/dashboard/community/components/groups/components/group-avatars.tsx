@@ -17,11 +17,11 @@ export const AristocratCommunityGroupAvatars = ({
 			className="flex gap-3"
 			aria-label={`Avatares de miembros del grupo (${actual_members} de ${max_members})`}
 		>
-			<ul className="-space-x-3 flex">
-				{members.map((avatar) => (
+			<ul className="-space-x-3 flex flex-wrap">
+				{members.map((avatar, idx) => (
 					<li key={avatar}>
 						<Avatar className="size-10 border border-primary/10">
-							<AvatarImage src={avatar} />
+							<AvatarImage src={avatar} alt={`Avatar del miembro ${idx + 1}`} />
 						</Avatar>
 					</li>
 				))}

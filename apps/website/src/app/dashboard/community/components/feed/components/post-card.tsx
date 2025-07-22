@@ -64,7 +64,7 @@ export const AristocratCommunityPostCard = ({
 							className="cursor-pointer rounded-md p-1 transition-colors hover:bg-muted"
 							aria-label="Opciones de la publicación"
 						>
-							<AristocratIcons.MorePoints />
+							<AristocratIcons.MorePoints aria-hidden="true" />
 						</PopoverTrigger>
 						<PopoverContent className="w-full max-w-sm p-1">
 							<a
@@ -77,13 +77,13 @@ export const AristocratCommunityPostCard = ({
 						</PopoverContent>
 					</div>
 					<Badge
-						className="bg-primary px-4 py-1 text-xs"
+						className="bg-primary px-3 py-1 text-xs"
 						aria-label={`Tipo de publicación: ${type}`}
 					>
 						{type}
 					</Badge>
 					<p>{description}</p>
-					<div className="flex gap-2 pb-2">
+					<div className="flex flex-wrap gap-2 pb-2">
 						{tags.map((tag) => (
 							<Badge
 								key={tag}

@@ -11,7 +11,7 @@ export const AristocratCommunityPostCardActions = ({
 }: PostCardActionsProps) => {
 	return (
 		<nav aria-label="Acciones de la publicación" className="pt-2">
-			<ul className="flex items-center gap-3">
+			<ul className="flex flex-wrap items-center gap-3">
 				<li>
 					<button
 						type="button"

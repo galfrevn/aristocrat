@@ -16,7 +16,11 @@ export const AristocratCommunityFeed = () => {
 	const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
 	return (
-		<section aria-labelledby="feed-comunidad-titulo" className="w-full">
+		<section
+			aria-labelledby="feed-comunidad-titulo"
+			className="w-full"
+			role="feed"
+		>
 			<header className="flex items-center gap-2">
 				<AristocratIcons.Chat className="size-5" aria-hidden="true" />
 				<h2 id="feed-comunidad-titulo" className="font-medium text-lg">
