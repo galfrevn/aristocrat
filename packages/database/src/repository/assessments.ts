@@ -1,10 +1,10 @@
+import { eq } from 'drizzle-orm';
 import type { AristocratDatabase } from '@/index';
 import {
 	type Assessment,
 	assessments,
 	type InsertAssessment,
 } from '@/schema/assessments';
-import { equals } from '@/utils/query';
 
 export class AssessmentsRepository {
 	constructor(private readonly database: AristocratDatabase) {
@@ -66,7 +66,7 @@ export class AssessmentsRepository {
 		const [assessment] = await this.database
 			.update(assessments)
 			.set(input)
-			.where(equals(assessments.id, assessmentId))
+			.where(eq(assessments.id, assessmentId))
 			.returning();
 
 		return assessment;
@@ -75,7 +75,7 @@ export class AssessmentsRepository {
 	async delete(assessmentId: string) {
 		const [assessment] = await this.database
 			.delete(assessments)
-			.where(equals(assessments.id, assessmentId))
+			.where(eq(assessments.id, assessmentId))
 			.returning();
 
 		return assessment;

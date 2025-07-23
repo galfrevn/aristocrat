@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import type { AristocratDatabase } from '@/index';
 import {
 	type AssessmentResponse,
@@ -16,7 +17,6 @@ import {
 	type LessonProgress,
 	lessonProgress,
 } from '@/schema/progress';
-import { equals } from '@/utils/query';
 
 export class ProgressRepository {
 	constructor(private readonly database: AristocratDatabase) {
@@ -62,7 +62,7 @@ export class ProgressRepository {
 		const [progress] = await this.database
 			.update(courseProgress)
 			.set(input)
-			.where(equals(courseProgress.id, progressId))
+			.where(eq(courseProgress.id, progressId))
 			.returning();
 
 		return progress;
@@ -107,7 +107,7 @@ export class ProgressRepository {
 		const [progress] = await this.database
 			.update(chapterProgress)
 			.set(input)
-			.where(equals(chapterProgress.id, progressId))
+			.where(eq(chapterProgress.id, progressId))
 			.returning();
 
 		return progress;
@@ -152,7 +152,7 @@ export class ProgressRepository {
 		const [progress] = await this.database
 			.update(lessonProgress)
 			.set(input)
-			.where(equals(lessonProgress.id, progressId))
+			.where(eq(lessonProgress.id, progressId))
 			.returning();
 
 		return progress;

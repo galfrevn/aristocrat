@@ -6,22 +6,26 @@ import {
 	CodeIcon,
 	LightbulbIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Markdown } from '@/components/ui/markdown';
+import { useLatestExerciseResponse, useSubmitExercise } from '@/hooks/progress';
 
 interface CodeCompletionExerciseProps {
 	exercise: Exercise;
-	isCompleted: boolean;
-	onComplete: () => void;
 }
 
 export function CodeCompletionExercise({
 	exercise,
-	isCompleted,
-	onComplete,
 }: CodeCompletionExerciseProps) {
+	const [userCode, setUserCode] = useState<string>('');
+	const [hasSubmitted, setHasSubmitted] = useState(false);
+	const [showExplanation, setShowExplanation] = useState(false);
+
+	const { data: latestResponse } = useLatestExerciseResponse(exercise.id);
+	const submitExercise = useSubmitExercise();
+
 	const parseCodeTemplate = (template: string) => {
 		if (!template) {
 			return {
@@ -53,17 +57,22 @@ export function CodeCompletionExercise({
 		exercise.codeTemplate || '',
 	);
 
-	const [userCode, setUserCode] = useState<string>(codeWithBlanks);
-	const [hasSubmitted, setHasSubmitted] = useState(isCompleted);
-	const [showExplanation, setShowExplanation] = useState(isCompleted);
+	useEffect(() => {
+		if (!userCode && codeWithBlanks) {
+			setUserCode(codeWithBlanks);
+		}
+	}, [codeWithBlanks, userCode]);
 
-	const handleSubmit = () => {
-		if (!userCode.trim()) return;
+	useEffect(() => {
+		if (latestResponse) {
+			setUserCode(latestResponse.userAnswer);
+			setHasSubmitted(true);
+			setShowExplanation(true);
+		}
+	}, [latestResponse]);
 
-		setHasSubmitted(true);
-		setShowExplanation(true);
-
-		let isCorrect = false;
+	const validateCode = (code: string): boolean => {
+		if (!code.trim()) return false;
 
 		if (exercise.validationRegex) {
 			const originalTemplate = codeWithBlanks;
@@ -74,64 +83,7 @@ export function CodeCompletionExercise({
 				const beforeBlank = templateParts[0] || '';
 				const afterBlank = templateParts[1] || '';
 
-				let filledContent = userCode;
-				if (beforeBlank) {
-					filledContent = filledContent.replace(beforeBlank, '');
-				}
-				if (afterBlank) {
-					filledContent = filledContent.replace(afterBlank, '');
-				}
-
-				const regex = new RegExp(exercise.validationRegex, 'i');
-				isCorrect = regex.test(filledContent.trim());
-			} else {
-				const regex = new RegExp(exercise.validationRegex, 'i');
-				isCorrect = regex.test(userCode.trim());
-			}
-		} else {
-			const expectedCode = exercise.correctAnswer.toLowerCase();
-			const userCodeLower = userCode.toLowerCase();
-
-			const expectedKeywords = expectedCode
-				.split(/[\s\n\r]+/)
-				.filter(
-					(word) =>
-						word.length > 2 &&
-						!['var', 'let', 'const', 'function', 'return'].includes(word),
-				);
-
-			const matchedKeywords = expectedKeywords.filter((keyword) =>
-				userCodeLower.includes(keyword),
-			);
-
-			isCorrect =
-				matchedKeywords.length >= Math.ceil(expectedKeywords.length * 0.7);
-		}
-
-		if (isCorrect) {
-			onComplete();
-		}
-	};
-
-	const handleReset = () => {
-		setUserCode(codeWithBlanks);
-		setHasSubmitted(false);
-		setShowExplanation(false);
-	};
-
-	const getIsCorrect = () => {
-		if (!hasSubmitted) return false;
-
-		if (exercise.validationRegex) {
-			const originalTemplate = codeWithBlanks;
-			const blankPattern = /___+/g;
-
-			if (blankPattern.test(originalTemplate)) {
-				const templateParts = originalTemplate.split(/___+/);
-				const beforeBlank = templateParts[0] || '';
-				const afterBlank = templateParts[1] || '';
-
-				let filledContent = userCode;
+				let filledContent = code;
 				if (beforeBlank) {
 					filledContent = filledContent.replace(beforeBlank, '');
 				}
@@ -144,11 +96,11 @@ export function CodeCompletionExercise({
 			}
 
 			const regex = new RegExp(exercise.validationRegex, 'i');
-			return regex.test(userCode.trim());
+			return regex.test(code.trim());
 		}
 
 		const expectedCode = exercise.correctAnswer.toLowerCase();
-		const userCodeLower = userCode.toLowerCase();
+		const userCodeLower = code.toLowerCase();
 
 		const expectedKeywords = expectedCode
 			.split(/[\s\n\r]+/)
@@ -165,7 +117,31 @@ export function CodeCompletionExercise({
 		return matchedKeywords.length >= Math.ceil(expectedKeywords.length * 0.7);
 	};
 
-	const isCorrect = getIsCorrect();
+	const handleSubmit = async () => {
+		if (!userCode.trim()) return;
+
+		const isCorrect = validateCode(userCode);
+		const pointsEarned = isCorrect ? exercise.points || 10 : 0;
+
+		await submitExercise.mutateAsync({
+			exerciseId: exercise.id,
+			userAnswer: userCode,
+			isCorrect,
+			pointsEarned,
+		});
+
+		setHasSubmitted(true);
+		setShowExplanation(true);
+	};
+
+	const handleReset = () => {
+		setUserCode(codeWithBlanks);
+		setHasSubmitted(false);
+		setShowExplanation(false);
+	};
+
+	const isCorrect = hasSubmitted && validateCode(userCode);
+	const isCompleted = latestResponse?.isCorrect || false;
 
 	return (
 		<div className="space-y-6">
@@ -229,15 +205,29 @@ export function CodeCompletionExercise({
 				{!hasSubmitted ? (
 					<Button
 						onClick={handleSubmit}
-						disabled={!userCode.trim()}
+						disabled={!userCode.trim() || submitExercise.isPending}
 						className="min-w-32"
 					>
-						Verificar código
+						{submitExercise.isPending ? 'Verificando...' : 'Verificar código'}
 					</Button>
 				) : (
-					<Button onClick={handleReset} variant="outline" className="min-w-32">
-						Intentar de nuevo
-					</Button>
+					<>
+						{!isCompleted && (
+							<Button
+								onClick={handleReset}
+								variant="outline"
+								className="min-w-32"
+							>
+								Intentar de nuevo
+							</Button>
+						)}
+						{isCompleted && (
+							<div className="flex items-center gap-2 text-green-600 text-sm">
+								<CheckCircle2Icon className="h-4 w-4" />
+								<span>Ejercicio completado correctamente</span>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 

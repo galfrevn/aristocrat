@@ -43,7 +43,7 @@ export function CourseVideo() {
 			title={course.data.title}
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 			allowFullScreen
-			className="h-[800px] w-full"
+			className="h-[800px] w-full bg-black"
 		/>
 	);
 }

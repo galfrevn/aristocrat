@@ -1,6 +1,6 @@
+import { eq } from 'drizzle-orm';
 import type { AristocratDatabase } from '@/index';
 import { banners, type InsertBanner } from '@/schema/banners';
-import { equals } from '@/utils/query';
 
 export class BannersRepository {
 	constructor(private readonly database: AristocratDatabase) {
@@ -39,7 +39,7 @@ export class BannersRepository {
 		const [banner] = await this.database
 			.update(banners)
 			.set({ ...input, updatedAt: new Date() })
-			.where(equals(banners.id, bannerId))
+			.where(eq(banners.id, bannerId))
 			.returning();
 
 		return banner;
@@ -48,7 +48,7 @@ export class BannersRepository {
 	async delete(bannerId: string) {
 		const [banner] = await this.database
 			.delete(banners)
-			.where(equals(banners.id, bannerId))
+			.where(eq(banners.id, bannerId))
 			.returning();
 
 		return banner;

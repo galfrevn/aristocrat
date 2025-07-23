@@ -62,8 +62,10 @@ export default function AristocratCourseContentPage() {
 						onMouseDown={handleMouseDown}
 						isResizing={isResizing}
 					/>
-					{/* @ts-expect-error - TODO: fix this */}
-					<ContentRootSidebar chapters={course.data.chapters} />
+					<ContentRootSidebar
+						chapters={course.data.chapters}
+						courseId={id as string}
+					/>
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</CourseContentProgressProvider>

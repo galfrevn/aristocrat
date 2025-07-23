@@ -73,7 +73,7 @@ export const navigationConfiguration: AristocratNavigationConfiguration = {
 				},
 				{
 					title: 'Centro de ayuda',
-					url: '#',
+					url: '/dashboard/help',
 					icon: AristocratIcons.HelpCenter,
 				},
 				{

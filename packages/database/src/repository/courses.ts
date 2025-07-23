@@ -1,6 +1,6 @@
+import { eq } from 'drizzle-orm';
 import type { AristocratDatabase } from '@/index';
 import { courses, type InsertCourse } from '@/schema/courses';
-import { equals } from '@/utils/query';
 
 export class CoursesRepository {
 	constructor(private readonly database: AristocratDatabase) {
@@ -45,7 +45,7 @@ export class CoursesRepository {
 		const [course] = await this.database
 			.update(courses)
 			.set(input)
-			.where(equals(courses.id, courseId))
+			.where(eq(courses.id, courseId))
 			.returning();
 
 		return course;
@@ -54,7 +54,7 @@ export class CoursesRepository {
 	async delete(courseId: string) {
 		const [course] = await this.database
 			.delete(courses)
-			.where(equals(courses.id, courseId))
+			.where(eq(courses.id, courseId))
 			.returning();
 
 		return course;

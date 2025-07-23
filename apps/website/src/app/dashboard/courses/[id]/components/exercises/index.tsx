@@ -71,9 +71,11 @@ export function LessonExercises(props: LessonExercisesProps) {
 	};
 
 	const computedFollowingLesson = useMemo(() => {
-		const allLessons = course.chapters.flatMap((chapter) => chapter.lessons);
+		const allLessons = course.chapters.flatMap(
+			(chapter: Chapter & { lessons: Array<Lesson> }) => chapter.lessons,
+		);
 		const currentLessonIndex = allLessons.findIndex(
-			(lesson) => lesson.id === currentSelectedLessonId,
+			(lesson: Lesson) => lesson.id === currentSelectedLessonId,
 		);
 
 		return allLessons[currentLessonIndex + 1];
@@ -157,19 +159,11 @@ export function LessonExercises(props: LessonExercisesProps) {
 				</CardHeader>
 				<CardContent>
 					{currentExercise.type === 'multiple_choice' && (
-						<MultipleChoiceExercise
-							exercise={currentExercise}
-							isCompleted={completedExercises.has(currentExercise.id)}
-							onComplete={() => handleExerciseComplete(currentExercise.id)}
-						/>
+						<MultipleChoiceExercise exercise={currentExercise} />
 					)}
 
 					{currentExercise.type === 'fill_blank' && (
-						<FillInBlankExercise
-							exercise={currentExercise}
-							isCompleted={completedExercises.has(currentExercise.id)}
-							onComplete={() => handleExerciseComplete(currentExercise.id)}
-						/>
+						<FillInBlankExercise exercise={currentExercise} />
 					)}
 
 					{/* {currentExercise.type === 'free_text' && (
@@ -181,11 +175,7 @@ export function LessonExercises(props: LessonExercisesProps) {
 					)} */}
 
 					{currentExercise.type === 'code' && (
-						<CodeCompletionExercise
-							exercise={currentExercise}
-							isCompleted={completedExercises.has(currentExercise.id)}
-							onComplete={() => handleExerciseComplete(currentExercise.id)}
-						/>
+						<CodeCompletionExercise exercise={currentExercise} />
 					)}
 				</CardContent>
 			</Card>

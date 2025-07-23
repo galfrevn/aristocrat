@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { AristocratIcons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { useCourseProgress } from '@/hooks/progress';
 
 interface AristocratCoursesListCardProps {
 	course: Course & { chapters: Array<Chapter> };
@@ -15,6 +17,11 @@ export const AristocratCoursesListCard = (
 	props: AristocratCoursesListCardProps,
 ) => {
 	const { course } = props;
+	const { data: courseProgress } = useCourseProgress(course.id);
+
+	const progressPercentage = courseProgress?.completionPercentage || 0;
+	const isCompleted = courseProgress?.status === 'completed';
+	const hasStarted = courseProgress?.status === 'in_progress' || isCompleted;
 
 	return (
 		<Card className="group h-min cursor-pointer pt-0 pb-2">
@@ -28,11 +35,25 @@ export const AristocratCoursesListCard = (
 						className="h-64 w-full rounded-xl object-cover"
 					/>
 					<div className="absolute inset-0" />
-					{course.category && (
-						<div className="absolute top-3 left-3">
+					<div className="absolute top-3 left-3 flex gap-2">
+						{course.category && (
 							<Badge variant="secondary">{course.category}</Badge>
-						</div>
-					)}
+						)}
+						{isCompleted && (
+							<Badge className="bg-green-600 text-white">
+								<AristocratIcons.Check className="mr-1 h-3 w-3" />
+								Completado
+							</Badge>
+						)}
+						{hasStarted && !isCompleted && (
+							<Badge
+								variant="outline"
+								className="border-blue-200 bg-blue-50 text-blue-700"
+							>
+								En progreso
+							</Badge>
+						)}
+					</div>
 					{/* <div className="absolute top-3 right-3">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -52,17 +73,6 @@ export const AristocratCoursesListCard = (
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div> */}
-					{/* {course.progress > 0 && (
-						<div className="absolute right-3 bottom-3 left-3">
-							<div className="rounded-lg p-2">
-								<div className="mb-1 flex items-center justify-between text-xs">
-									<span className="font-medium">Progress</span>
-									<span>{course.progress}%</span>
-								</div>
-								<Progress value={course.progress} className="h-1" />
-							</div>
-						</div>
-					)} */}
 				</div>
 			</Link>
 
@@ -119,12 +129,34 @@ export const AristocratCoursesListCard = (
 						</div>
 					</div> */}
 
-					{/* {course.lastAccessed !== 'Never' && (
-						<div className="flex items-center space-x-1 text-xs">
-							<AristocratIcons.Calendar className="h-3 w-3" />
-							<span>Last accessed {course.lastAccessed}</span>
+					{hasStarted && (
+						<div className="flex items-center justify-between border-t pt-3 text-xs">
+							<div className="flex items-center space-x-1 text-muted-foreground">
+								{isCompleted ? (
+									<>
+										<AristocratIcons.Check className="h-3 w-3 text-green-600" />
+										<span className="text-green-600">Curso completado</span>
+									</>
+								) : (
+									<>
+										<AristocratIcons.Clock className="h-3 w-3" />
+										<span>En progreso: {Math.round(progressPercentage)}%</span>
+									</>
+								)}
+							</div>
+							{courseProgress?.updatedAt && (
+								<span className="text-muted-foreground">
+									{new Date(courseProgress.updatedAt).toLocaleDateString(
+										'es-ES',
+										{
+											month: 'short',
+											day: 'numeric',
+										},
+									)}
+								</span>
+							)}
 						</div>
-					)} */}
+					)}
 				</div>
 			</CardContent>
 		</Card>

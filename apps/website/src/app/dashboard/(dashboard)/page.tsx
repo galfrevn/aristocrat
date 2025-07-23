@@ -1,11 +1,7 @@
-import Chat from '@/components/chat';
-import { SettingsPanel } from '@/components/settings-panel';
+import { AristocratPageWrapper } from '@/app/dashboard/(dashboard)/components/wrapper';
 
 const AristocratDashboardPage = () => (
-	<>
-		<Chat />
-		<SettingsPanel />
-	</>
+	<AristocratPageWrapper>En desarrollo :)</AristocratPageWrapper>
 );
 
 export default AristocratDashboardPage;
