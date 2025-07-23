@@ -1,6 +1,8 @@
 import type { Chapter, Course } from '@aristocrat/database/schema';
+
 import Image from 'next/image';
 import Link from 'next/link';
+
 import { AristocratIcons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';

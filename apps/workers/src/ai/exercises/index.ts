@@ -8,28 +8,44 @@ import type { TranscriptResponse } from '@/tools/transcripter';
 const generateExercisesSchema = z.object({
 	exercises: z.array(
 		z.object({
-			question: z.string(),
+			title: z.string(),
+			description: z.string().optional(),
 			type: z.enum([
 				'multiple_choice',
-				'true_false',
 				'fill_blank',
-				'short_answer',
+				'code',
+				'free_text',
+				'drag_drop',
 			]),
-			options: z.array(z.string()).optional(),
+			question: z.string(),
+			options: z
+				.array(
+					z.object({
+						id: z.string(),
+						text: z.string(),
+						isCorrect: z.boolean().default(false),
+					}),
+				)
+				.min(2)
+				.max(5)
+				.optional(),
 			correctAnswer: z.string(),
-			explanation: z.string().optional(),
-			hint: z.string().optional(),
+			explanation: z.string(),
+			validationRegex: z.string().optional(),
+			codeTemplate: z
+				.object({
+					language: z.string(),
+					template: z.string(),
+				})
+				.optional(),
+			hints: z.array(z.string()).max(3).optional(),
 		}),
 	),
 });
 
-export const generateExercisesFn = async (
-	transcript: TranscriptResponse['transcript'],
-	lesson: Lesson,
-	language: string,
-) =>
+export const generateExercisesFn = async (lesson: Lesson, language: string) =>
 	generateObject({
 		model: google('gemini-2.5-pro'),
 		schema: generateExercisesSchema,
-		prompt: GENERATE_EXERCISES_PROMPT(transcript, lesson, language),
+		prompt: GENERATE_EXERCISES_PROMPT(lesson, language),
 	});

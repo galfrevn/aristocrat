@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm';
+import { jsonb } from 'drizzle-orm/pg-core';
 import { lessons } from '@/schema/lessons';
 import {
 	index,
@@ -30,16 +31,33 @@ export const exercises = table(
 	{
 		id: uuid('id').defaultRandom().primaryKey(),
 
+		title: text('title').notNull(),
+		description: text('description'),
+
 		// # Content
 		question: text('question').notNull(),
 		explanation: text('explanation'),
-		hint: text('hint'),
 
 		// # Exercise Configuration
 		type: exerciseType().notNull(),
-		options: text('options').array().notNull().default(sql`'{}'::text[]`), // For multiple choice, etc.
+		hints: jsonb('hints').$type<string[]>(),
+		options:
+			jsonb('options').$type<
+				Array<{
+					id: string;
+					text: string;
+					isCorrect?: boolean;
+				}>
+			>(),
+
 		correctAnswer: text('correct_answer').notNull(),
 		points: integer('points').default(1).notNull(),
+
+		// For FreeText, FillBlank and Code exercises
+		validationRegex: text('validation_regex'),
+
+		// For Code exercises
+		codeTemplate: text('code_template'),
 
 		// # Organization
 		order: integer('order').notNull(),

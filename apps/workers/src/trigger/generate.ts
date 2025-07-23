@@ -6,7 +6,8 @@ import {
 	ExercisesRepository,
 	LessonsRepository,
 } from '@aristocrat/database';
-import { logger, metadata, runs, task } from '@trigger.dev/sdk/v3';
+import type { Chapter, Lesson } from '@aristocrat/database/schema';
+import { batch, logger, metadata, runs, task } from '@trigger.dev/sdk/v3';
 import { INVALID_CONTENT, STEP } from '@/tools/steps';
 import {
 	prepareTranscriptForAi,
@@ -19,7 +20,10 @@ import {
 } from '@/trigger/categorization';
 import { courseChaptersGenerationJob } from '@/trigger/chapters';
 import { keyConceptsResearchJob } from '@/trigger/concepts';
-import { exercisesGenerationJob } from '@/trigger/exercises';
+import {
+	type ExercisesGenerationJobPayload,
+	exercisesGenerationJob,
+} from '@/trigger/exercises';
 import { lessonsGenerationJob } from '@/trigger/lessons';
 import { courseValidationJob } from '@/trigger/validate';
 
@@ -93,20 +97,29 @@ export const courseGenerationJob = task({
 		// Generation step #2.5
 		// Categorize the course based on the transcript and metadata
 		// Attach the category and tags to the course
-		await courseCategorizationJob.trigger({
-			course,
-			transcript: transcript.transcript,
-			language: payload.language,
-		});
 
 		// Generation step #2.5.1
 		// Describe the course based on the transcript and metadata
 		// Attach the description to the course
-		await describeCourseJob.trigger({
-			course,
-			transcript: transcript.transcript,
-			language: payload.language,
-		});
+
+		await batch.trigger([
+			{
+				id: 'course:categorization',
+				payload: {
+					course,
+					transcript: transcript.transcript,
+					language: payload.language,
+				},
+			},
+			{
+				id: 'course:description',
+				payload: {
+					course,
+					transcript: transcript.transcript,
+					language: payload.language,
+				},
+			},
+		]);
 
 		// Generation step #3
 		// Process the transcript and generate chapters.
@@ -132,7 +145,7 @@ export const courseGenerationJob = task({
 		);
 
 		// Generation step #4
-		// Generate lessons content and save lessons using batchTriggerAndWait
+		// Generate lessons content and save lessons to database
 		const lessonsGenerationPayloads = chaptersInDatabase.map(
 			(chapterInDatabase, chapterIndex) => ({
 				payload: {
@@ -152,48 +165,53 @@ export const courseGenerationJob = task({
 			// @ts-ignore
 			await lessonsGenerationJob.batchTriggerAndWait(lessonsGenerationPayloads);
 
-		// Process results and save lessons to database
-		const chaptersWithLessonsInDatabase = await Promise.all(
-			lessonsContentResponses.runs.map(
-				async (lessonsContentResponse, index) => {
-					if (!lessonsContentResponse.ok) {
-						throw new Error(
-							`Failed to generate lessons for chapter ${chaptersInDatabase[index].id}`,
-						);
-					}
+		const chaptersWithLessonsInDatabase: Array<{
+			chapter: Chapter;
+			lessons: Array<Lesson>;
+		}> = [];
 
-					const chapterInDatabase = chaptersInDatabase[index];
-					const chapterWithLessons = {
-						...chapterInDatabase,
-						lessons:
-							courseChaptersGenerationJobResponse.output.chapters[index]
-								.lessons,
-					};
+		for (let index = 0; index < lessonsContentResponses.runs.length; index++) {
+			const lessonsContentResponse = lessonsContentResponses.runs[index];
+			const chapterInDatabase = chaptersInDatabase[index];
 
-					// Save lessons to database
-					const lessonsInDatabase = await lessonsRepository.insertMany(
-						lessonsContentResponse.output.lessons.map(
-							(lesson, lessonIndex) => ({
-								chapterId: chapterInDatabase.id,
-								title: lesson.title,
-								description: lesson.description,
-								content: lesson.content,
-								keyConcepts: lesson.keyConcepts || [],
-								startTime: chapterWithLessons.lessons[lessonIndex].startTime,
-								endTime: chapterWithLessons.lessons[lessonIndex].endTime,
-								type: 'text' as const,
-								order: lessonIndex + 1,
-							}),
-						),
-					);
+			if (!lessonsContentResponse.ok) {
+				continue;
+			}
 
-					return { chapter: chapterInDatabase, lessons: lessonsInDatabase };
-				},
-			),
-		);
+			try {
+				const chapterWithLessons = {
+					...chapterInDatabase,
+					lessons:
+						courseChaptersGenerationJobResponse.output.chapters[index].lessons,
+				};
+
+				const lessonsInDatabase = await lessonsRepository.insertMany(
+					lessonsContentResponse.output.lessons.map((lesson, lessonIndex) => ({
+						chapterId: chapterInDatabase.id,
+						title: lesson.title,
+						description: lesson.description,
+						content: lesson.content,
+						keyConcepts: lesson.keyConcepts || [],
+						startTime: chapterWithLessons.lessons[lessonIndex].startTime,
+						endTime: chapterWithLessons.lessons[lessonIndex].endTime,
+						type: 'text' as const,
+						order: lessonIndex + 1,
+					})),
+				);
+
+				chaptersWithLessonsInDatabase.push({
+					chapter: chapterInDatabase,
+					lessons: lessonsInDatabase,
+				});
+			} catch (dbError) {}
+		}
+
+		if (chaptersWithLessonsInDatabase.length === 0) {
+			throw new Error('All lesson generation tasks failed');
+		}
 
 		// Generation step #5
-		// Research key concepts for all lessons using batchTriggerAndWait
+		// Research key concepts for all lessons
 		const keyConceptsResearchPayloads = chaptersWithLessonsInDatabase.flatMap(
 			({ lessons }) =>
 				lessons
@@ -255,12 +273,11 @@ export const courseGenerationJob = task({
 		}
 
 		// Generation step #6
-		// Generate exercises for all lessons using batchTriggerAndWait
+		// Generate exercises for all lessons
 		const exercisesGenerationPayloads = researchedLessons.flatMap(
 			({ lessons }) =>
 				lessons.map((lesson) => ({
 					payload: {
-						transcript: transcript.transcript,
 						language: payload.language,
 						lesson,
 					},
@@ -271,32 +288,42 @@ export const courseGenerationJob = task({
 			exercisesGenerationPayloads,
 		);
 
-		// Process results and save exercises to database
 		let payloadIndex = 0;
+
 		for (const { lessons } of researchedLessons) {
 			for (const lesson of lessons) {
 				const exercisesResponse = exercisesResponses.runs[payloadIndex];
 				payloadIndex++;
 
 				if (!exercisesResponse.ok) {
-					throw new Error(
-						`Failed to generate exercises for lesson ${lesson.id}`,
-					);
+					continue;
 				}
 
-				// Save exercises to database
-				await exercisesRepository.insertMany(
-					exercisesResponse.output.exercises.map((exercise, exerciseIndex) => ({
+				try {
+					await exercisesRepository.insertMany(
+						exercisesResponse.output.exercises.map(
+							(exercise, exerciseIndex) => ({
+								lessonId: lesson.id,
+								title: exercise.title,
+								description: exercise.description,
+								question: exercise.question,
+								explanation: exercise.explanation,
+								type: exercise.type,
+								hints: exercise.hints || [],
+								options: exercise.options || [],
+								correctAnswer: exercise.correctAnswer,
+								validationRegex: exercise.validationRegex,
+								codeTemplate: exercise.codeTemplate,
+								order: exerciseIndex + 1,
+							}),
+						),
+					);
+				} catch (dbError) {
+					logger.error('Failed to save exercises to database', {
 						lessonId: lesson.id,
-						question: exercise.question,
-						type: exercise.type,
-						options: exercise.options || [],
-						correctAnswer: exercise.correctAnswer,
-						explanation: exercise.explanation,
-						hint: exercise.hint,
-						order: exerciseIndex + 1,
-					})),
-				);
+						error: dbError,
+					});
+				}
 			}
 		}
 

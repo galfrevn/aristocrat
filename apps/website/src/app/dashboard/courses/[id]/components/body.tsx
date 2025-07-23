@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { trpc } from '@/utils/trpc';
+import { LessonExercises } from './exercises';
 import { useCourseContentProgress } from './hooks';
 import { ContentRootMarkdown } from './markdown';
 
@@ -65,12 +66,12 @@ export function ContentRootBody() {
 		[course.data, currentSelectedLessonId],
 	) as unknown as Lesson;
 
-	/* const exercises = useQuery({
+	const exercises = useQuery({
 		enabled: !!currentSelectedLessonId,
 		...trpc.courses.$get.exercises.queryOptions({
 			lessonId: currentSelectedLessonId,
 		}),
-	}); */
+	});
 
 	return (
 		<div className="mx-auto max-w-7xl p-6">
@@ -87,14 +88,14 @@ export function ContentRootBody() {
 					</div>
 
 					{/* Exercises Section */}
-					{/* {exercises.data && exercises.data.length > 0 && course.data && (
+					{exercises.data && exercises.data.length > 0 && course.data && (
 						<div className="mt-8">
 							<LessonExercises
 								course={course.data as any}
 								exercises={exercises.data as any}
 							/>
 						</div>
-					)} */}
+					)}
 				</div>
 
 				{/* Conceptos Column */}

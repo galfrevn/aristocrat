@@ -1,6 +1,6 @@
 {
-	"id": "50f0ec90-1502-4ab1-a054-d6062eb1b926",
-	"prevId": "e9790b94-2798-4b84-814c-1cda72fe489c",
+	"id": "b754c801-16d2-437b-8ae6-2672baa8070c",
+	"prevId": "d1c421b8-d1d0-4e28-9ffe-b5d5f6dedebb",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -761,6 +761,20 @@
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
 				}
 			},
 			"indexes": {
@@ -853,6 +867,18 @@
 					"notNull": true,
 					"default": "gen_random_uuid()"
 				},
+				"title": {
+					"name": "title",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
 				"question": {
 					"name": "question",
 					"type": "text",
@@ -865,12 +891,6 @@
 					"primaryKey": false,
 					"notNull": false
 				},
-				"hint": {
-					"name": "hint",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false
-				},
 				"type": {
 					"name": "type",
 					"type": "exercise_type",
@@ -878,12 +898,17 @@
 					"primaryKey": false,
 					"notNull": true
 				},
+				"hints": {
+					"name": "hints",
+					"type": "jsonb",
+					"primaryKey": false,
+					"notNull": false
+				},
 				"options": {
 					"name": "options",
-					"type": "text[]",
+					"type": "jsonb",
 					"primaryKey": false,
-					"notNull": true,
-					"default": "'{}'::text[]"
+					"notNull": false
 				},
 				"correct_answer": {
 					"name": "correct_answer",
@@ -897,6 +922,18 @@
 					"primaryKey": false,
 					"notNull": true,
 					"default": 1
+				},
+				"validation_regex": {
+					"name": "validation_regex",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"code_template": {
+					"name": "code_template",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
 				},
 				"order": {
 					"name": "order",

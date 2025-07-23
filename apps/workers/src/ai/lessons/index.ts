@@ -29,7 +29,7 @@ export const generateLessonsContentFn = async (
 	language: string,
 ) =>
 	generateObject({
-		model: openai('gpt-4.1'),
+		model: openai('gpt-4.1-mini'),
 		schema: generateLessonsContentSchema,
 		prompt: GENERATE_LESSONS_CONTENT_PROMPT(transcript, chapter, language),
 	});

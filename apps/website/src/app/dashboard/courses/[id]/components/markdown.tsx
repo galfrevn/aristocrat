@@ -4,7 +4,19 @@ import '@wooorm/starry-night/style/light';
 import type { Lesson } from '@aristocrat/database/schema';
 
 import { MarkdownHooks } from 'react-markdown';
+
 import EnableCodeFragments from 'rehype-starry-night';
+import EnableTables from 'remark-gfm';
+
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
 interface ContentRootMarkdownProps {
 	content: Lesson['content'];
@@ -16,7 +28,7 @@ export const ContentRootMarkdown = memo((props: ContentRootMarkdownProps) => {
 
 	return (
 		<MarkdownHooks
-			rehypePlugins={[EnableCodeFragments]}
+			rehypePlugins={[EnableCodeFragments, EnableTables]}
 			components={getContentRootMarkdownComponents(type)}
 		>
 			{content}
@@ -32,6 +44,12 @@ type MarkdownComponentProps = {
 	ol: React.OlHTMLAttributes<HTMLOListElement>;
 	hr: React.HTMLProps<HTMLHRElement>;
 	code: React.HTMLProps<HTMLPreElement>;
+	table: React.HTMLProps<HTMLTableElement>;
+	tableBody: React.HTMLProps<HTMLTableSectionElement>;
+	tableCell: React.HTMLProps<HTMLTableCellElement>;
+	tableHeader: React.HTMLProps<HTMLTableSectionElement>;
+	tableHead: React.HTMLProps<HTMLTableHeaderCellElement>;
+	tableRow: React.HTMLProps<HTMLTableRowElement>;
 };
 
 const getContentRootMarkdownComponents = (
@@ -70,4 +88,19 @@ const getContentRootMarkdownComponents = (
 			{...props}
 		/>
 	),
+	code: (props: MarkdownComponentProps['code']) => (
+		<code className="rounded-sm border bg-muted/50 px-1" {...props} />
+	),
+	table: (props: MarkdownComponentProps['table']) => (
+		<Table {...props} className={cn(props.className, 'my-4 w-full border')} />
+	),
+	thead: (props: MarkdownComponentProps['tableHeader']) => (
+		<TableHeader {...props} />
+	),
+	tbody: (props: MarkdownComponentProps['tableBody']) => (
+		<TableBody {...props} />
+	),
+	tr: (props: MarkdownComponentProps['tableRow']) => <TableRow {...props} />,
+	td: (props: MarkdownComponentProps['tableCell']) => <TableCell {...props} />,
+	th: (props: MarkdownComponentProps['tableHead']) => <TableHead {...props} />,
 });

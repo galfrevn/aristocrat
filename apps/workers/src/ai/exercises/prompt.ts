@@ -1,18 +1,10 @@
 import type { Lesson } from '@aristocrat/database/schema';
-import type { TranscriptResponse } from '@/tools/transcripter';
 
-export const GENERATE_EXERCISES_PROMPT = (
-	transcript: TranscriptResponse['transcript'],
-	lesson: Lesson,
-	language: string,
-) => `
+export const GENERATE_EXERCISES_PROMPT = (lesson: Lesson, language: string) => `
 	You are an expert educator and exercise creator.
 	Your task is to generate interactive exercises for the provided lesson.
 	You will receive a lesson with a title, description, content, and key concepts.
 	For the lesson, you will create exercises that reinforce the learning objectives and concepts covered in the lesson.
-
-	Transcript:
-	${transcript}
 
 	INSTRUCTIONS:
 	- For the lesson, analyze the title, description, content, and key concepts provided.
@@ -22,8 +14,7 @@ export const GENERATE_EXERCISES_PROMPT = (
   - The exercise should include:
     - Title: A concise and descriptive title for the exercise.
     - Description: A brief description of what the exercise is about and what it aims to test. Formatted using Markdown for clarity.
-    - Type: The type of exercise. Must be one of: "multiple_choice", "fill_in_the_blank", "code_completion", "math", "free_text", "drag_and_drop", "matching".
-    - Difficulty: The difficulty level of the exercise. Must be one of: "easy", "medium", "hard".
+    - Type: The type of exercise. Must be one of: "multiple_choice", "true_false", "fill_blank", "code", "drag_and_drop".
     - Question: The main question or task of the exercise. This should be clear and specific.
     - Options: An array of options for multiple-choice exercises (optional). Each option should have:
       - id: A unique identifier for the option.
@@ -39,29 +30,28 @@ export const GENERATE_EXERCISES_PROMPT = (
 
 	STRICT REQUIREMENTS:
 	- For multiple_choice exercises: MUST include 5 options with exactly ONE marked as correct
-	- For fill_in_blank exercises: MUST include validationRegex
-	- For code_completion exercises: MUST include codeTemplate with language and template
+	- For true_false exercises: MUST include exactly ONE correct answer
+	- For fill_blank exercises: MUST include validationRegex
+	- For code exercises: MUST include codeTemplate with language and template
 	- All exercises MUST have title, question, correctAnswer, and explanation
 
 	EXERCISE TYPE SELECTION GUIDELINES:
 	- Use "multiple_choice" for concept understanding and definitions (25% of exercises)
-	- Use "fill_in_blank" for vocabulary, syntax, or completing statements (25% of exercises)
-	- Use "code_completion" for programming lessons or technical implementations (20% of exercises)
-	- Use "free_text" for explanations, reasoning, or open-ended questions (15% of exercises)
-	- Use "math" for calculations, formulas, or numerical problems (10% of exercises)
+	- Use "true_false" for boolean questions (25% of exercises)
+	- Use "fill_blank" for vocabulary, syntax, or completing statements (25% of exercises)
+	- Use "code" for programming lessons or technical implementations (20% of exercises)
 	- Use "drag_drop" for connecting related concepts or terms (5% of exercises)
 
 	CHOOSE EXERCISE TYPE BASED ON LESSON CONTENT:
-	- If lesson contains code examples → use "code_completion" or "fill_in_blank"
+	- If lesson contains code examples → use "code" or "fill_blank"
 	- If lesson explains concepts/theory → use "multiple_choice" or "free_text"
-	- If lesson has definitions/vocabulary → use "fill_in_blank" or "drag_drop"
-	- If lesson has calculations/numbers → use "math"
+	- If lesson has definitions/vocabulary → use "fill_blank" or "drag_drop"
 	- If lesson requires explanation → use "free_text"
 
 	The target language is ${language}. All generated content must be in this language.
 
 	INPUT:
-	${JSON.stringify(lesson, null, 2)}  
+	${JSON.stringify(lesson, null, 2)}
 
 	OUTPUT: 
 	EXAMPLE FOR multiple_choice:
@@ -80,54 +70,44 @@ export const GENERATE_EXERCISES_PROMPT = (
   	"explanation": "Detailed explanation..."
 	}
 
-	EXAMPLE FOR fill_in_blank:
+	EXAMPLE FOR true_false:
+
 	{
-  	"title": "Complete the Code",
-  	"type": "fill_in_blank", 
+  	"title": "True or False",
+  	"type": "true_false",
+  	"question": "The capital of France is Paris.",
+  	"correctAnswer": "true",
+  	"explanation": "Paris is the capital of France."
+	}
+
+	EXAMPLE FOR fill_blank:
+	{
+  	"title": "Complete the missing word",
+  	"type": "fill_blank", 
   	"question": "Complete: const result = array._____(item => item > 5);",
   	"correctAnswer": "filter",
   	"explanation": "The filter method creates a new array with elements that pass the test",
   	"validationRegex": "^filter$"
 	}
 
-	EXAMPLE FOR code_completion:
+	EXAMPLE FOR code:
 	{
   	"title": "Complete the Function",
-  	"type": "code_completion",
+  	"type": "code",
   	"question": "Complete this function to calculate the area of a circle",
   	"codeTemplate": {
     	"language": "javascript",
     	"template": "function circleArea(radius) {\\n  return Math.PI * ___;\\n}"
-  	},
+  	}, // MUST be present for code exercises
   	"correctAnswer": "radius * radius",
   	"explanation": "Area = π × radius²",
   	"validationRegex": "radius\\\\s*\\\\*\\\\s*radius|radius\\\\s*\\\\*\\\\*\\\\s*2|Math\\\\.pow\\\\(radius,\\\\s*2\\\\)"
 	}
 
-	EXAMPLE FOR free_text:
-	{
-	  "title": "Explain the Concept",
-	  "type": "free_text",
-	  "question": "Explain why this approach is beneficial.",
-	  "correctAnswer": "efficiency and performance",
-	  "explanation": "This approach improves efficiency and performance because...",
-	  "validationRegex": ".*(efficiency|performance|speed|fast).*"
-	}
-
-	EXAMPLE FOR math:
-	{
-  	"title": "Calculate the Result",
-  	"type": "math",
-  	"question": "If x = 5 and y = 3, what is x² + y²?",
-  	"correctAnswer": "34",
-  	"explanation": "5² + 3² = 25 + 9 = 34",
-  	"validationRegex": "^34$"
-	}
-
-	EXAMPLE FOR matching:
+	EXAMPLE FOR drag_drop:
 	{
   	"title": "Match the Terms",
-  	"type": "matching",
+  	"type": "drag_drop",
   	"question": "Match each term with its definition",
   	"options": [
     	{"id": "term1", "text": "Variable", "isCorrect": false},
@@ -146,11 +126,11 @@ export const GENERATE_EXERCISES_PROMPT = (
         "title": "Exercise Title",
         "description": "Brief description",
         "type": "exercise_type_here",
-        "difficulty": "medium",
         "question": "Question text",
+        // Include type-specific fields as shown in examples above
         "correctAnswer": "answer",
         "explanation": "explanation"
-      }	
+      }
     ]
   }
 
@@ -163,4 +143,5 @@ export const GENERATE_EXERCISES_PROMPT = (
 	- Ensure correctAnswer matches what students should input
 	- Validation regex should be precise but allow minor variations
 	- Use the exact lesson ID from input
+	- All the generated content must be in the target language (${language}).
 `;

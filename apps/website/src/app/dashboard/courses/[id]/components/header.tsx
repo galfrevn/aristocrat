@@ -15,7 +15,7 @@ export function ContentRootHeader(props: ContentRootHeaderProps) {
 		<header className="flex items-center justify-between bg-muted px-4 py-2 shadow">
 			<div className="flex items-center gap-4">
 				<Link href="/dashboard">
-					<div className="-ml-2 relative flex aspect-square size-10 items-center justify-center overflow-hidden rounded-lg p-2 text-sidebar-primary-foreground after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] dark:bg-sidebar-primary">
+					<div className="-mx-2 relative flex aspect-square size-10 items-center justify-center overflow-hidden rounded-lg p-2 text-sidebar-primary-foreground after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[0_1px_2px_0_rgb(0_0_0/.05),inset_0_1px_0_0_rgb(255_255_255/.12)] dark:bg-sidebar-primary">
 						<Image
 							alt="Aristocrat Logo"
 							src="/aristocrat/logo.avif"
