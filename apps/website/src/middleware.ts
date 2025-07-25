@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
 	const serverRoute = process.env.NEXT_PUBLIC_SERVER_URL;
+
 	const response = await fetch(`${serverRoute}/api/auth/get-session`, {
 		headers: {
 			cookie: request.headers.get('cookie') || '',

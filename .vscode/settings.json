@@ -1,0 +1,15 @@
+{
+	"editor.fontFamily": "'Droid Sans Mono', 'monospace', monospace",
+	"editor.fontSize": 14,
+	"editor.lineHeight": 1.5,
+	"editor.fontLigatures": true,
+	"explorer.compactFolders": false,
+	"editor.semanticHighlighting.enabled": true,
+	"breadcrumbs.enabled": false,
+	"workbench.activityBar.location": "hidden",
+	"editor.minimap.enabled": false,
+	"editor.scrollbar.horizontal": "hidden",
+	"editor.scrollbar.vertical": "hidden",
+	"window.commandCenter": false,
+	"workbench.layoutControl.enabled": false
+}
