@@ -21,6 +21,7 @@ import {
 	RiFilmAiLine,
 	RiFlagLine,
 	RiFocus2Line,
+	RiGraduationCapLine,
 	RiGroupLine,
 	RiHeart3Line,
 	RiHome2Line,
